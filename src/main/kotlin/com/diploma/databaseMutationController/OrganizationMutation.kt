@@ -2,7 +2,7 @@ package com.diploma.databaseMutationController
 
 import com.diploma.model.Organization
 import com.diploma.model.OrganizationData
-import com.diploma.model.OrganizationInputData
+import com.diploma.model.OrganizationDataInput
 import com.diploma.model.User
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.update
 
 class OrganizationMutation {
 
-    fun createOrg(data: OrganizationInputData) {
+    fun createOrg(data: OrganizationDataInput) {
         transaction {
             Organization.insert {
                 it[name] = data.name

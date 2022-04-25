@@ -64,7 +64,18 @@ class JwtConfig(){
         }
     }
 
-    //TODO DecodeJWTToken
+    fun tokenDecode(token : String) : MutableList<String> {
+        try {
+            val chunks: Array<String> = token.split(".").toTypedArray()
+            val decoder = Base64.getDecoder()
+            val claimsValues = mutableListOf<String>()
+            claimsValues.add(String(decoder.decode(chunks[1])).substringAfterLast("id\":").substringBefore(","))
+            claimsValues.add(String(decoder.decode(chunks[1])).substringAfterLast("email\":\"").substringBefore("\""))
+            return claimsValues
+        } catch (e: IllegalArgumentException) {
+            throw GraphQLException("invalid token given")
+        }
+    }
 
     data class JwtUser(val userEmail: Int, val userId: String): Principal
 

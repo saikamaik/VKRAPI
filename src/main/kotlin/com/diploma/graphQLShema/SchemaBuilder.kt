@@ -69,7 +69,7 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("createOrg") {
         description = "Create a new org"
-        resolver { orgInput: OrganizationInputData ->
+        resolver { orgInput: OrganizationDataInput ->
             try {
                 OrganizationMutation().createOrg(orgInput)
                 true
@@ -112,7 +112,7 @@ fun SchemaBuilder.schemaValue() {
         description = "The input of the users without the identifier"
     }
 
-    inputType<OrganizationInputData>{
+    inputType<OrganizationDataInput>{
         description = "The input of the orgs without the identifier"
     }
 

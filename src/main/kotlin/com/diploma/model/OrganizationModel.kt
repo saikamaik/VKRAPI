@@ -8,7 +8,7 @@ data class OrganizationData(
     var name: String? = ""
 )
 
-data class OrganizationInputData(
+data class OrganizationDataInput(
     var name: String = ""
 )
 

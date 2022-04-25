@@ -12,12 +12,12 @@ data class LoginBody(
 
 data class UserData(
     var id: Int? = null,
-    var name: String = "",
-    var email: String = "",
-    var password: String = "",
-    var phoneNumber: String = "",
-    var birthDate: String = "",
-    var address: String = "",
+    var name: String? = "",
+    var email: String? = "",
+    var password: String? = "",
+    var phoneNumber: String? = "",
+    var birthDate: String? = "",
+    var address: String? = "",
     var orgId: Int? = null,
     var refreshToken: String? = "",
     var accessToken: String? = ""
