@@ -31,16 +31,16 @@ object Branch: Table() {
     val phoneNumber = varchar("phone_number", 255)
     val orgId = integer("org_id") references Organization.id
 
-    override val primaryKey = PrimaryKey(Branch.id, name = "branch_pkey")
+    override val primaryKey = PrimaryKey(id, name = "branch_pk")
 
     fun toMap(row: ResultRow): BranchData =
         BranchData(
-            id = row[Branch.id],
-            name = row[Branch.name],
-            country = row[Branch.country],
-            city = row[Branch.city],
-            address = row[Branch.address],
-            phoneNumber = row[Branch.phoneNumber],
-            orgId = row[Branch.orgId]
+            id = row[id],
+            name = row[name],
+            country = row[country],
+            city = row[city],
+            address = row[address],
+            phoneNumber = row[phoneNumber],
+            orgId = row[orgId]
         )
 }

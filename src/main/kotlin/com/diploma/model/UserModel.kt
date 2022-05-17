@@ -21,7 +21,6 @@ data class UserData(
     var orgId: Int? = null,
     var refreshToken: String? = "",
     var accessToken: String? = ""
-
 )
 
 data class UserDataInput(
@@ -47,7 +46,7 @@ object User: Table() {
     val refreshToken = varchar("refresh_token", 500).nullable()
     val orgId = (integer("org_id") references Organization.id)
 
-    override val primaryKey = PrimaryKey(id, name = "user_pkey")
+    override val primaryKey = PrimaryKey(id, name = "user_pk")
 
     fun toMap(row: ResultRow): UserData =
         UserData(
@@ -73,4 +72,18 @@ object User: Table() {
             birthDate = row[birthDate]!!.toString("dd-MM-yyyy"),
             address = row[address],
         )
+}
+
+data class UserApartmentData(
+    val id: Int,
+    val userId: Int,
+    val apartmentId: Int
+)
+
+object User_Apartment: Table() {
+    val id = integer("id").autoIncrement()
+    val userId = integer("user_id") references User.id
+    val apartmentId = integer("apartment_id") references Apartment.id
+
+    override val primaryKey = PrimaryKey(id, name = "user_apartment_pk")
 }

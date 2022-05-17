@@ -1,8 +1,6 @@
 package com.diploma.databaseMutationController
 
-import com.diploma.model.User
-import com.diploma.model.UserData
-import com.diploma.model.UserDataInput
+import com.diploma.model.*
 import com.diploma.utils.JwtConfig
 import com.diploma.utils.SECRET
 import graphql.GraphQLException
@@ -110,6 +108,21 @@ class UserMutation {
                 if(data.phoneNumber != null) it[phoneNumber] = data.phoneNumber
                 if(data.email != null) it[email] = data.email
             }
+        }
+    }
+
+    fun addApartmentToUser(data: UserApartmentData) {
+        transaction {
+            User_Apartment.insert {
+                it[userId] = data.userId
+                it[apartmentId] = data.apartmentId
+            }
+        }
+    }
+
+    fun deleteApartmentToUser(id: Int) {
+        transaction {
+            User_Apartment.deleteWhere { User_Apartment.id eq id }
         }
     }
 }

@@ -1,9 +1,6 @@
 package com.diploma.databaseMutationController
 
-import com.diploma.model.Organization
-import com.diploma.model.OrganizationData
-import com.diploma.model.OrganizationDataInput
-import com.diploma.model.User
+import com.diploma.model.*
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -16,7 +13,7 @@ class OrganizationMutation {
         transaction {
             Organization.insert {
                 it[name] = data.name
-            }
+            }[Organization.id]
         }
     }
 
@@ -37,7 +34,7 @@ class OrganizationMutation {
     }
 
     private fun checkForInnerKey(id: Int): Boolean {
-        var eq: Boolean = true
+        var eq = true
         User.selectAll().forEach() { _ ->
             eq = User.orgId.equals(id)
         }

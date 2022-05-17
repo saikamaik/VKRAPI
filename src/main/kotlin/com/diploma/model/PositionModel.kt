@@ -1,6 +1,5 @@
 package com.diploma.model
 
-import com.diploma.model.Organization.autoIncrement
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 
@@ -14,10 +13,10 @@ data class PositionDataInput(
 )
 
 object Position: Table() {
-    private val id = integer("id").autoIncrement()
-    private val name = varchar("name", 255)
+    val id = integer("id").autoIncrement()
+    val name = varchar("name", 255)
 
-    override val primaryKey = PrimaryKey(id, name = "position_pkey")
+    override val primaryKey = PrimaryKey(id, name = "position_pk")
 
     fun toMap(row: ResultRow): PositionData =
         PositionData(

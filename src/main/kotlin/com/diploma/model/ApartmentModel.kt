@@ -14,14 +14,14 @@ data class ApartmentData(
 )
 
 data class ApartmentDataInput(
-    val fullSize: Int? = null,
-    val liveSize: Int? = null,
-    val category: String? = "",
-    val brunchId: Int? = null,
-    val personalAccount: Int? = null
+    var fullSize: Int? = null,
+    var liveSize: Int? = null,
+    var category: String? = "",
+    var brunchId: Int? = null,
+    var personalAccount: Int? = null
 )
 
-object Apartment: Table() {
+object Apartment : Table() {
     val id = integer("id").autoIncrement()
     val fullSize = integer("full_size")
     val liveSize = integer("live_size")
@@ -29,15 +29,15 @@ object Apartment: Table() {
     val personalAccount = integer("personal_account")
     val branchId = integer("branch_id") references Branch.id
 
-    override val primaryKey = PrimaryKey(Apartment.id, name = "apartment_pkey")
+    override val primaryKey = PrimaryKey(id, name = "apartment_pk")
 
     fun toMap(row: ResultRow): ApartmentData =
         ApartmentData(
-            id = row[Apartment.id],
-            fullSize = row[Apartment.fullSize],
-            liveSize = row[Apartment.liveSize],
-            category = row[Apartment.category],
-            personalAccount = row[Apartment.personalAccount],
-            brunchId = row[Apartment.branchId]
+            id = row[id],
+            fullSize = row[fullSize],
+            liveSize = row[liveSize],
+            category = row[category],
+            personalAccount = row[personalAccount],
+            brunchId = row[branchId]
         )
 }

@@ -34,11 +34,6 @@ fun Application.module(testing: Boolean = false) {
 
     DatabaseFactory.dbInnit()
 
-//    install(GraphQL) {
-//        playground = true
-//        schema { schemaValue() }
-//    }
-
     install(CORS) {
         anyHost()
     }

@@ -16,7 +16,7 @@ object Organization: Table() {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 255)
 
-    override val primaryKey = PrimaryKey(id, name = "organization_pkey")
+    override val primaryKey = PrimaryKey(id, name = "organization_pk")
 
     fun toMap(row: ResultRow): OrganizationData =
         OrganizationData(
