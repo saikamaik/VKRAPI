@@ -14,11 +14,11 @@ data class BranchData(
 )
 
 data class BranchDataInput(
-    val name: String? = "",
-    val country: String? = "",
-    val city: String? = "",
-    val address: String? = "",
-    val phoneNumber: String? = "",
+    val name: String?,
+    val country: String?,
+    val city: String?,
+    val address: String?,
+    val phoneNumber: String?,
     val orgId: Int?
 )
 

@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.update
 
 class MeasureReferenceMutation {
 
-    fun createMeasureRef(data: MeasureReferenceDataInput) {
+    fun createMeasureReference(data: MeasureReferenceDataInput) {
         transaction {
             MeasureReference.insert {
                 it[fullName] = data.fullName
@@ -18,16 +18,16 @@ class MeasureReferenceMutation {
         }
     }
 
-    fun updateMeasureRef(data: MeasureReferenceData) {
+    fun updateMeasureReference(id: Int, data: MeasureReferenceDataInput) {
         transaction {
-                MeasureReference.update({ MeasureReference.id eq data.id}) {
+                MeasureReference.update({ MeasureReference.id eq id}) {
                     it[fullName] = data.fullName
                     it[shortName] = data.shortName
                 }
             }
         }
 
-    fun deleteMeasureRef(id: Int) {
+    fun deleteMeasureReference(id: Int) {
         transaction {
             if (checkForInnerKey(id)) {
                 return@transaction

@@ -9,7 +9,7 @@ data class ApartmentData(
     var fullSize: Int,
     var liveSize: Int,
     var category: String,
-    var brunchId: Int,
+    var branchId: Int,
     var personalAccount: Int
 )
 
@@ -17,7 +17,7 @@ data class ApartmentDataInput(
     var fullSize: Int? = null,
     var liveSize: Int? = null,
     var category: String? = "",
-    var brunchId: Int? = null,
+    var branchId: Int? = null,
     var personalAccount: Int? = null
 )
 
@@ -38,6 +38,6 @@ object Apartment : Table() {
             liveSize = row[liveSize],
             category = row[category],
             personalAccount = row[personalAccount],
-            brunchId = row[branchId]
+            branchId = row[branchId]
         )
 }

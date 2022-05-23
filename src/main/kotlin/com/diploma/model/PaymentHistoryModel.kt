@@ -14,11 +14,11 @@ data class PaymentHistoryData(
 )
 
 data class PaymentHistoryDataInput(
-    val date: String,
-    val cost: Float,
-    val penalty: Float,
-    val userId: Int,
-    val apartmentId: Int,
+    val date: String?,
+    val cost: Float?,
+    val penalty: Float?,
+    val userId: Int?,
+    val apartmentId: Int?,
 )
 
 object PaymentHistory: Table() {

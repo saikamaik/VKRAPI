@@ -13,9 +13,9 @@ data class EmployeeData(
 )
 
 data class EmployeeDataInput(
-    val name: String? = "",
-    val phoneNumber: String? = "",
-    val description: String? = "",
+    val name: String?,
+    val phoneNumber: String?,
+    val description: String?,
     val branchId: Int?,
     val positionId: Int?
 )

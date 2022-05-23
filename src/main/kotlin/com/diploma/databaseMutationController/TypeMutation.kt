@@ -3,6 +3,7 @@ package com.diploma.databaseMutationController
 import com.diploma.model.CounterReference
 import com.diploma.model.Type
 import com.diploma.model.TypeData
+import com.diploma.model.TypeDataInput
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -11,7 +12,7 @@ import org.jetbrains.exposed.sql.update
 
 class TypeMutation {
 
-    fun createType(data: TypeData) {
+    fun createType(data: TypeDataInput) {
         transaction {
             Type.insert {
                 it[name] = data.name
@@ -19,9 +20,9 @@ class TypeMutation {
         }
     }
 
-    fun updateType(data: TypeData) {
+    fun updateType(id: Int, data: TypeDataInput) {
         transaction {
-            Type.update({Type.id eq data.id!!}) {
+            Type.update({Type.id eq id}) {
                 it[name] = data.name
             }
         }

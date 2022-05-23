@@ -13,10 +13,10 @@ data class ReadingsData(
 )
 
 data class ReadingsDataInput(
-    val reading: Float,
-    val date: String,
-    val apartmentId: Int,
-    val counterRefId: Int
+    val reading: Float?,
+    val date: String?,
+    val apartmentId: Int?,
+    val counterRefId: Int?
 )
 
 object Readings: Table() {

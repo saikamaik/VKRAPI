@@ -4,8 +4,8 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 
 data class OrganizationData(
-    var id: Int? = null,
-    var name: String? = ""
+    var id: Int?,
+    var name: String?
 )
 
 data class OrganizationDataInput(

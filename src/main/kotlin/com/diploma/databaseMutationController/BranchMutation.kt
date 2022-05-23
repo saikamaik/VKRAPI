@@ -2,6 +2,7 @@ package com.diploma.databaseMutationController
 
 import com.diploma.model.Branch
 import com.diploma.model.BranchData
+import com.diploma.model.BranchDataInput
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -9,7 +10,7 @@ import org.jetbrains.exposed.sql.update
 
 class BranchMutation {
 
-    fun createBranch(data: BranchData) {
+    fun createBranch(data: BranchDataInput) {
         transaction {
             Branch.insert {
                 it[name] = data.name!!
@@ -22,15 +23,15 @@ class BranchMutation {
         }
     }
 
-    fun updateBranch(id: Int, data: BranchData) {
+    fun updateBranch(id: Int, data: BranchDataInput) {
         transaction {
             Branch.update({Branch.id eq id}) {
-                if (data.name!= null) it[name] = data.name!!
-                if (data.country!= null) it[country] = data.country!!
-                if (data.city!= null) it[city] = data.city!!
-                if (data.address!= null) it[address] = data.address!!
-                if (data.phoneNumber!= null) it[phoneNumber] = data.phoneNumber!!
-                if (data.orgId!= null) it[orgId] = data.orgId!!
+                if (data.name!= null) it[name] = data.name
+                if (data.country!= null) it[country] = data.country
+                if (data.city!= null) it[city] = data.city
+                if (data.address!= null) it[address] = data.address
+                if (data.phoneNumber!= null) it[phoneNumber] = data.phoneNumber
+                if (data.orgId!= null) it[orgId] = data.orgId
             }
         }
     }
