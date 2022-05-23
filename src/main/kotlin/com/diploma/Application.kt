@@ -32,7 +32,7 @@ val jwtConfig = JwtConfig()
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
 
-    DatabaseFactory.dbInnit()
+    DatabaseFactory.hikari()
 
     install(CORS) {
         anyHost()
