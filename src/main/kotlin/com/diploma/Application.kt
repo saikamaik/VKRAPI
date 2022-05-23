@@ -50,6 +50,10 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
 
+        get("/") {
+            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+        }
+
         post("/login") {
             val loginBody = call.receive<LoginBody>()
 
