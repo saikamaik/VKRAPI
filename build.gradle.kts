@@ -9,6 +9,10 @@ plugins {
     kotlin("jvm") version "1.6.10"
 }
 
+tasks.create("stage") {
+    dependsOn("installDist")
+}
+
 group = "com.diploma"
 version = "0.0.1"
 
