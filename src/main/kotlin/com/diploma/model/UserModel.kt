@@ -12,13 +12,13 @@ data class LoginBody(
 
 data class UserData(
     var id: Int? = null,
-    var name: String? = "",
-    var email: String? = "",
+    val name: String? = "",
+    val email: String? = "",
     var password: String? = "",
-    var phoneNumber: String? = "",
-    var birthDate: String? = "",
-    var address: String? = "",
-    var orgId: Int? = null,
+    val phoneNumber: String? = "",
+    val birthDate: String? = "",
+    val address: String? = "",
+    var orgId: Int? = 1,
     var refreshToken: String? = "",
     var accessToken: String? = ""
 )
@@ -58,8 +58,8 @@ object User: Table() {
             birthDate = row[birthDate]!!.toString("dd-MM-yyyy"),
             address = row[address],
             orgId = row[orgId],
-            accessToken = JwtConfig().generateAccessToken(row[email], row[id]),
-            refreshToken = JwtConfig().generateRefreshToken(row[email], row[id])
+            accessToken = JwtConfig.generateAccessToken(row[email], row[id]),
+            refreshToken = JwtConfig.generateRefreshToken(row[email], row[id])
         )
 
     fun toShowMap(row: ResultRow): UserData =

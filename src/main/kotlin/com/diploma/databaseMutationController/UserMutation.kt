@@ -2,7 +2,6 @@ package com.diploma.databaseMutationController
 
 import com.diploma.model.*
 import com.diploma.utils.JwtConfig
-import com.diploma.utils.SECRET
 import graphql.GraphQLException
 import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -14,23 +13,23 @@ import org.postgresql.util.PSQLException
 class UserMutation {
 
     fun userRegistration(data: UserData): UserData { //Регистрация юзера
+        val jwtSecret = System.getenv("JWT_SECRET")
+        data.id = null
         try {
             data.id = transaction {
                 User.insert {
-                    if (data.id != null) it[id] = data.id!!
                     it[email] = data.email!!
-                    it[password] = DigestUtils.md5Hex(data.email + SECRET + data.password)
+                    it[password] = DigestUtils.md5Hex(data.email + jwtSecret + data.password)
                     it[name] = data.name!!
                     it[phoneNumber] = data.phoneNumber!!
                     it[birthDate] = DateTime(data.birthDate)
                 }[User.id]
             }
-            data.refreshToken = JwtConfig().generateRefreshToken(data.email!!, data.id!!)
+            data.refreshToken = JwtConfig.generateRefreshToken(data.email!!, data.id!!)
             transaction {
                 User.update({ User.id eq data.id!! }) { it[refreshToken] = data.refreshToken!! }
             }
-            data.accessToken = JwtConfig().generateAccessToken(data.email!!, data.id!!)
-            data.password = ""
+            data.accessToken = JwtConfig.generateAccessToken(data.email!!, data.id!!)
             return data
         } catch (ex: ExposedSQLException) {
             if (ex.toString().contains("User_email_key")) {
@@ -50,22 +49,20 @@ class UserMutation {
         return data
     }
 
-    //TODO логин и рег в графкл
-
     fun authUser(email: String, password: String): String? {//Авторизация юзера
         val map: List<UserData> = transaction {
             User.select {
                 (User.email eq email) and (User.password eq password)
             }.map { User.toMap(it) }
         }
-        var user: UserData? = null
+        val user: UserData?
         user = transaction {
             User.select { (User.email eq email) }.limit(1).single().let{ User.toShowMap(it)}
         }
         user.accessToken = null
         return if (map.isNotEmpty()) {
-            user.refreshToken = JwtConfig().generateRefreshToken(user.email!!, user.id!!)
-            user.accessToken = JwtConfig().generateAccessToken(user.email!!, user.id!!)
+            user.refreshToken = JwtConfig.generateRefreshToken(user.email!!, user.id!!)
+            user.accessToken = JwtConfig.generateAccessToken(user.email!!, user.id!!)
             user.id = user.id
             transaction {
                 User.update({ User.email eq user.email!! }) {
@@ -76,6 +73,26 @@ class UserMutation {
             user.accessToken
         } else
             return null
+    }
+
+    fun refreshUserToken(data : UserData) : UserData{//обновление токена пользователя
+        val values = JwtConfig.tokenDecode(data.refreshToken!!)
+        val map : List<UserData> = transaction {
+            User.select {User.refreshToken eq data.refreshToken!!}.map { User.toMap(it) }
+        }
+        if (map.isNotEmpty()){
+            transaction {
+                User.update({ User.refreshToken eq data.refreshToken!! }){
+                    data.refreshToken = JwtConfig.generateRefreshToken(values[1], values[0].toIntOrNull()!!)
+                    it[refreshToken] = data.refreshToken!!
+                }
+                data.accessToken = JwtConfig.generateAccessToken(values[1], values[0].toInt())
+            }
+        }
+        else{
+            throw GraphQLException("Invalid token was given")
+        }
+        return data
     }
 
     fun deleteUser(data: Int) {

@@ -11,8 +11,8 @@ data class MeasureReferenceData(
 )
 
 data class MeasureReferenceDataInput(
-    var fullName: String = "",
-    var shortName: String = ""
+    var fullName: String? = "",
+    var shortName: String? = ""
 )
 
 object MeasureReference: Table() {

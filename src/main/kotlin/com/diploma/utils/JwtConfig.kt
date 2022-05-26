@@ -9,24 +9,15 @@ import io.ktor.auth.jwt.*
 import org.joda.time.DateTime
 import java.util.*
 
-const val SECRET = "a%s*&##fsj@"
-
 data class TokenKey(val email: String, val id : Int) : Principal
 
-class JwtConfig(){
-
-    companion object Constants {
+object JwtConfig{
 
     private const val issuer = "User"
-    private const val jwtRealm = "com.diploma"
-
-    private const val CLAIM_USEREMAIL = "userEmail"
-    private const val CLAIM_USERID = "userId"
-
     private const val validityInMs = 36_000_00 * 24 // 1 day
-    }
 
-    private val algorithm = Algorithm.HMAC512(SECRET)
+    private val jwtSecret = System.getenv("JWT_SECRET")
+    private val algorithm = Algorithm.HMAC512(jwtSecret)
 
     val verifier: JWTVerifier = JWT
         .require(algorithm)
@@ -49,22 +40,7 @@ class JwtConfig(){
         .withClaim("date", DateTime.now().toString())
         .sign(algorithm)
 
-    fun configureKtorFeature(config: JWTAuthenticationProvider.Configuration) = with(config) {
-        verifier(verifier)
-        realm = jwtRealm
-        validate {
-            val userEmail = it.payload.getClaim(CLAIM_USEREMAIL).asInt()
-            val userId = it.payload.getClaim(CLAIM_USERID).asString()
-
-            if (userId != null && userEmail != null) {
-                JwtUser(userEmail, userId)
-            } else {
-                null
-            }
-        }
-    }
-
-    fun tokenDecode(token : String) : MutableList<String> {
+    fun tokenDecode(token: String) : MutableList<String> {
         try {
             val chunks: Array<String> = token.split(".").toTypedArray()
             val decoder = Base64.getDecoder()

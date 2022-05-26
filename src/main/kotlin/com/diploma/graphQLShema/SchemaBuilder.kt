@@ -2,7 +2,6 @@ package com.diploma.graphQLShema
 
 import com.apurebase.kgraphql.schema.dsl.SchemaBuilder
 import com.diploma.databaseMutationController.*
-import com.diploma.init
 import com.diploma.model.*
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
@@ -11,7 +10,42 @@ import kotlin.Exception
 
 fun SchemaBuilder.schemaValue() {
 
-    init()
+//    init()
+
+    mutation("userRegistration"){
+        description = "Register a new user "
+        resolver { userInput: UserData ->
+            try{
+                UserMutation().userRegistration(userInput)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
+    mutation("authUser"){
+        description = "Authenticate user"
+        resolver { email: String, password: String ->
+            try{
+                UserMutation().authUser(email, password)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
+    mutation("refreshToken"){
+        description = "Refresh user token"
+        resolver { userInput: UserData ->
+            try{
+                UserMutation().refreshUserToken(userInput)
+                true
+            } catch (e: Exception) {
+                false
+            } }
+    }
 
     mutation("createUser") {
         description = "Create a new user"

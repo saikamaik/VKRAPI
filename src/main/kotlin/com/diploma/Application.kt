@@ -9,6 +9,7 @@ import com.diploma.model.GraphQLRequest
 import com.diploma.model.LoginBody
 import com.diploma.model.User
 import com.diploma.utils.JwtConfig
+import com.diploma.utils.TokenKey
 import graphql.ExecutionInput
 import io.ktor.server.netty.*
 import io.ktor.application.*
@@ -26,7 +27,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
-val jwtConfig = JwtConfig()
+val jwtConfig = JwtConfig
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
@@ -34,50 +35,58 @@ fun Application.module(testing: Boolean = false) {
 
     DatabaseFactory.hikari()
 
+    install(GraphQL){
+        playground = true
+        schema { schemaValue()}
+    }
+
     install(CORS) {
         anyHost()
+//        method(HttpMethod.Options)
+//        method(HttpMethod.Get)
+//        header("Authorization")
+//        allowSameOrigin = true
+//        allowCredentials = true
+//        allowNonSimpleContentTypes = true
     }
     install(CallLogging)
     install(ContentNegotiation) {
         gson()
     }
 
-    install(Authentication) {
-        jwt {
-            jwtConfig.configureKtorFeature(this)
-        }
-    }
+//    install(Authentication) {
+//        jwt {
+//            verifier(JwtConfig.verifier)
+//            validate {
+//                TokenKey(it.payload.getClaim("email").asString(), it.payload.getClaim("id").asInt())
+//            }
+//        }
+//    }
 
     routing {
 
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
-        }
+//        route("/") {
+//                post("/graphql") {
+//                    graphQLRequest = call.receive<GraphQLRequest>()
+//                    if (("authUser" in graphQLRequest!!.query) or ("userRegistration" in graphQLRequest!!.query)) {
+//                        KGraphQL.schema { schemaValue() }.execute(graphQLRequest!!.query)
+//                    } else {
+//                        call.respond(HttpStatusCode(401, "not authorized(("))
+//                    }
+//            }
+//            authenticate {
+                post("/graphql") {
+                    val graphqlRequest = call.receive<GraphQLRequest>()
+                    KGraphQL.schema { schemaValue() }.execute(graphqlRequest.query)
+                }
+//            }
 
-        post("/login") {
-            val loginBody = call.receive<LoginBody>()
-
-            val user = UserMutation().authUser(loginBody.email, loginBody.password)
-
-            if (user == null) {
-                call.respond(HttpStatusCode.Unauthorized, "Invalid credentials!")
-                return@post
+            get("/user") {
+                val users = transaction {
+                    User.selectAll().map { User.toShowMap(it) }
+                }
+                call.respond(users)
             }
-            call.respond(user)
-        }
-
-        authenticate  {
-            post("/graphql") {
-                val graphqlRequest = call.receive<GraphQLRequest>()
-                KGraphQL.schema{schemaValue()}.execute(graphqlRequest.query)
-            }
-        }
-
-        get("/user") {
-            val users = transaction {
-                User.selectAll().map { User.toShowMap(it) }
-            }
-            call.respond(users)
         }
     }
-}
+//}

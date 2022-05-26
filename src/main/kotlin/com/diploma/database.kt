@@ -14,7 +14,7 @@ fun init() {
 
     transaction {
 
-        SchemaUtils.create(Organization)
+//        SchemaUtils.create(Organization)
 //        Organization.insert {
 //            it[name] = "Test1"
 //        }
@@ -22,7 +22,7 @@ fun init() {
 //            it[name] = "Test2"
 //        }
 
-        SchemaUtils.create(User)
+//        SchemaUtils.create(User)
 //        User.insert {
 //            it[name] = "Robert Ignatiev"
 //            it[email] = "mrobshaw@att.net"
