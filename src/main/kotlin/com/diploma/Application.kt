@@ -65,6 +65,18 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
 
+        post("/login") {
+            val loginBody = call.receive<LoginBody>()
+
+            val user = UserMutation().authUser(loginBody.email, loginBody.password)
+
+            if (user == null) {
+                call.respond(HttpStatusCode.Unauthorized, "Invalid credentials!")
+                return@post
+            }
+            call.respond(user)
+        }
+
 //        route("/") {
 //                post("/graphql") {
 //                    graphQLRequest = call.receive<GraphQLRequest>()
@@ -89,4 +101,4 @@ fun Application.module(testing: Boolean = false) {
             }
         }
     }
-//}
+
