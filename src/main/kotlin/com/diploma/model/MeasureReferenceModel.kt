@@ -15,7 +15,7 @@ data class MeasureReferenceDataInput(
     var shortName: String? = ""
 )
 
-object MeasureReference: Table() {
+object Measure_Reference: Table() {
     val id = integer("id").autoIncrement()
     val fullName = varchar("full_name", 255)
     val shortName = varchar("short_name", 255)

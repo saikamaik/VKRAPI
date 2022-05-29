@@ -1,8 +1,7 @@
 package com.diploma.databaseMutationController
 
-import com.diploma.model.CounterReference
+import com.diploma.model.Counter_Reference
 import com.diploma.model.Type
-import com.diploma.model.TypeData
 import com.diploma.model.TypeDataInput
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -40,8 +39,8 @@ class TypeMutation {
 
     private fun checkForInnerKey(id: Int): Boolean {
         var eq = true
-        CounterReference.selectAll().forEach() { _ ->
-            eq = CounterReference.typeId.equals(id)
+        Counter_Reference.selectAll().forEach() { _ ->
+            eq = Counter_Reference.typeId.equals(id)
         }
         return eq
     }

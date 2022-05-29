@@ -260,7 +260,7 @@ fun SchemaBuilder.schemaValue() {
         description = "Показывает все элементы таблицы MeasureReference"
         resolver { ->
             transaction {
-                MeasureReference.selectAll().map{ MeasureReference.toMap(it)}
+                Measure_Reference.selectAll().map{ Measure_Reference.toMap(it)}
             }
         }
     }
@@ -392,7 +392,7 @@ fun SchemaBuilder.schemaValue() {
         description = "Показывает все элементы таблицы CounterReference"
         resolver { ->
             transaction {
-                CounterReference.selectAll().map{ CounterReference.toMap(it)}
+                Counter_Reference.selectAll().map{ Counter_Reference.toMap(it)}
             }
         }
     }
@@ -612,7 +612,7 @@ fun SchemaBuilder.schemaValue() {
         description = "Показывает все элементы таблицы ServiceRecord"
         resolver { ->
             transaction {
-                ServiceRecord.selectAll().map{ ServiceRecord.toMap(it)}
+                Service_Record.selectAll().map{ Service_Record.toMap(it)}
             }
         }
     }

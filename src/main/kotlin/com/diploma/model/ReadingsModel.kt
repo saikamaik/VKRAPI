@@ -24,7 +24,7 @@ object Readings: Table() {
     val reading = float("reading")
     val date = datetime("date")
     val apartmentId = integer("apartment_id") references Apartment.id
-    val counterRefId = integer("cf_id") references CounterReference.id
+    val counterRefId = integer("cf_id") references Counter_Reference.id
 
     override val primaryKey = PrimaryKey(id, name = "readings_pk")
 

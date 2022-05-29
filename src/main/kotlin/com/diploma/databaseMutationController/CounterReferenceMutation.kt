@@ -1,6 +1,6 @@
 package com.diploma.databaseMutationController
 
-import com.diploma.model.CounterReference
+import com.diploma.model.Counter_Reference
 import com.diploma.model.CounterReferenceDataInput
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -11,19 +11,19 @@ class CounterReferenceMutation {
 
     fun createCounterReference(data: CounterReferenceDataInput) {
         transaction {
-            CounterReference.insert {
+            Counter_Reference.insert {
                 it[number] = data.number!!
                 it[model] = data.model!!
                 it[label] = data.label!!
                 it[serviceDate] = data.serviceDate!!
                 it[typeId] = data.typeId!!
-            }[CounterReference.id]
+            }[Counter_Reference.id]
         }
     }
 
     fun updateCounterReference(id: Int, data: CounterReferenceDataInput) {
         transaction {
-            CounterReference.update ({CounterReference.id eq id}) {
+            Counter_Reference.update ({Counter_Reference.id eq id}) {
                 if(data.number != null) it[number] = data.number
                 if(data.model != null) it[model] = data.model
                 if(data.label != null) it[label] = data.label
@@ -35,7 +35,7 @@ class CounterReferenceMutation {
 
     fun deleteCounterReference(id: Int) {
         transaction {
-            CounterReference.deleteWhere { CounterReference.id eq id }
+            Counter_Reference.deleteWhere { Counter_Reference.id eq id }
         }
     }
 

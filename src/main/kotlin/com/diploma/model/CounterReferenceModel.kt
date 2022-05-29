@@ -20,7 +20,7 @@ data class CounterReferenceDataInput(
     val typeId: Int?
 )
 
-object CounterReference: Table() {
+object Counter_Reference: Table() {
     val id = integer("id").autoIncrement()
     val number = varchar("number", 255)
     val model = varchar("model", 255)

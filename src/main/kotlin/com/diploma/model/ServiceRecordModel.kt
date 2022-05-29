@@ -21,7 +21,7 @@ data class ServiceRecordDataInput(
     val employeeId: Int
 )
 
-object ServiceRecord: Table() {
+object Service_Record: Table() {
     val id = integer("id").autoIncrement()
     val registrationDate = datetime("registration_date")
     val status = varchar("status", 255)

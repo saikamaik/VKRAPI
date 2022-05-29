@@ -29,7 +29,7 @@ object Service: Table() {
     val description = varchar("description", 600)
     val cost = float("cost")
     val positionId = integer("position_id") references Position.id
-    val measureRefId = integer("mr_id") references MeasureReference.id
+    val measureRefId = integer("mr_id") references Measure_Reference.id
 
     override val primaryKey = PrimaryKey (id, name = "service_pk")
 

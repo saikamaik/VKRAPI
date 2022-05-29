@@ -11,7 +11,7 @@ class MeasureReferenceMutation {
 
     fun createMeasureReference(data: MeasureReferenceDataInput) {
         transaction {
-            MeasureReference.insert {
+            Measure_Reference.insert {
                 it[fullName] = data.fullName!!
                 it[shortName] = data.shortName!!
             }
@@ -20,7 +20,7 @@ class MeasureReferenceMutation {
 
     fun updateMeasureReference(id: Int, data: MeasureReferenceDataInput) {
         transaction {
-                MeasureReference.update({ MeasureReference.id eq id}) {
+                Measure_Reference.update({ Measure_Reference.id eq id}) {
                     it[fullName] = data.fullName!!
                     it[shortName] = data.shortName!!
                 }
@@ -32,7 +32,7 @@ class MeasureReferenceMutation {
             if (checkForInnerKey(id)) {
                 return@transaction
             } else {
-                MeasureReference.deleteWhere { MeasureReference.id eq id }
+                Measure_Reference.deleteWhere { Measure_Reference.id eq id }
             }
         }
     }

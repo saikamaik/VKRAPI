@@ -1,6 +1,6 @@
 package com.diploma.databaseMutationController
 
-import com.diploma.model.ServiceRecord
+import com.diploma.model.Service_Record
 import com.diploma.model.ServiceRecordDataInput
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -12,7 +12,7 @@ class ServiceRecordMutation {
 
     fun createServiceRecord(data: ServiceRecordDataInput) {
         transaction {
-            ServiceRecord.insert {
+            Service_Record.insert {
                 it[registrationDate] = DateTime(data.registrationDate)
                 it[status] = data.status
                 it[userId] = data.userId
@@ -24,7 +24,7 @@ class ServiceRecordMutation {
 
     fun updateServiceRecord(id: Int, data: ServiceRecordDataInput) {
         transaction {
-            ServiceRecord.update ({ ServiceRecord.id eq id}) {
+            Service_Record.update ({ Service_Record.id eq id}) {
                 it[registrationDate] = DateTime(data.registrationDate)
                 it[status] = data.status
                 it[userId] = data.userId
@@ -36,7 +36,7 @@ class ServiceRecordMutation {
 
     fun deleteServiceRecord(id: Int) {
         transaction {
-            ServiceRecord.deleteWhere { ServiceRecord.id eq id }
+            Service_Record.deleteWhere { Service_Record.id eq id }
         }
     }
 
