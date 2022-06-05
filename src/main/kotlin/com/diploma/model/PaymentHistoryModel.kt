@@ -8,26 +8,20 @@ data class PaymentHistoryData(
     val id: Int,
     val date: String,
     val cost: Float,
-    val penalty: Float,
-    val userId: Int,
-    val apartmentId: Int,
+    val branchId: Int?,
 )
 
 data class PaymentHistoryDataInput(
     val date: String?,
     val cost: Float?,
-    val penalty: Float?,
-    val userId: Int?,
-    val apartmentId: Int?,
+    val branchId: Int?,
 )
 
 object PaymentHistory: Table() {
     val id = integer("id").autoIncrement()
     val date = datetime("date")
     val cost = float("cost")
-    val penalty = float("penalty")
-    val userId = integer("id") references User.id
-    val apartmentId = integer("id") references Apartment.id
+    val branchId = integer("branch_id") references Branch.id
 
     override val primaryKey = PrimaryKey(id, name = "payment_history_pk")
 
@@ -36,8 +30,6 @@ object PaymentHistory: Table() {
             id = row[id],
             date = row[date].toString("dd-MM-yyyy"),
             cost = row[cost],
-            penalty = row[penalty],
-            userId = row[userId],
-            apartmentId = row[apartmentId]
+            branchId = row[branchId]
         )
 }

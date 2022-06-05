@@ -1,11 +1,11 @@
 package com.diploma.databaseMutationController
 
+import com.diploma.model.MeasureReferenceData
+import com.diploma.model.ServiceRecordData
 import com.diploma.model.Service_Record
 import com.diploma.model.ServiceRecordDataInput
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
 class ServiceRecordMutation {
@@ -37,6 +37,31 @@ class ServiceRecordMutation {
     fun deleteServiceRecord(id: Int) {
         transaction {
             Service_Record.deleteWhere { Service_Record.id eq id }
+        }
+    }
+
+    fun showServiceRecord(id: Int?, registrationDate: String?, status: String?, userId: Int?, serviceId: Int?, employeeId: Int?): List<ServiceRecordData> {
+        val date = DateTime(registrationDate)
+        return when {
+            id != null -> {
+                Service_Record.select { Service_Record.id eq id }. map { Service_Record.toMap(it) }
+            }
+            registrationDate != null -> {
+                Service_Record.select { Service_Record.registrationDate eq date }. map { Service_Record.toMap(it) }
+            }
+            status != null -> {
+                Service_Record.select { Service_Record.status eq status }. map { Service_Record.toMap(it) }
+            }
+            userId != null -> {
+                Service_Record.select { Service_Record.userId eq userId }. map { Service_Record.toMap(it) }
+            }
+            serviceId != null -> {
+                Service_Record.select { Service_Record.serviceId eq serviceId }. map { Service_Record.toMap(it) }
+            }
+            employeeId != null -> {
+                Service_Record.select { Service_Record.employeeId eq employeeId }. map { Service_Record.toMap(it) }
+            }
+            else -> Service_Record.selectAll().map { Service_Record.toMap(it) }
         }
     }
 

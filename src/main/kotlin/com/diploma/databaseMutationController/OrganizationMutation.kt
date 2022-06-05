@@ -1,11 +1,8 @@
 package com.diploma.databaseMutationController
 
 import com.diploma.model.*
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 class OrganizationMutation {
 
@@ -39,6 +36,22 @@ class OrganizationMutation {
             eq = User.orgId.equals(id)
         }
         return eq
+    }
+
+    fun showOrg(id: Int?, name: String?): List<OrganizationData> {
+        return when {
+            (id != null && name != null) ->
+                Organization
+                    .select {(Organization.id eq id) and (Organization.name eq name)}
+                    .map { Organization.toMap(it) }
+            id != null ->
+                Organization.select {Organization.id eq id}.map { Organization.toMap(it) }
+            name != null ->
+                Organization.select {Organization.name eq name}.map { Organization.toMap(it) }
+            else -> Organization.selectAll().map { Organization.toMap(it) }
+        }
+
+
     }
 
 }

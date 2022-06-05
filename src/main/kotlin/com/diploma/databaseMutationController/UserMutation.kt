@@ -12,8 +12,9 @@ import org.postgresql.util.PSQLException
 
 class UserMutation {
 
-    fun userRegistration(data: UserData): UserData { //Регистрация юзера
-        val jwtSecret = System.getenv("JWT_SECRET")
+    private val jwtSecret = System.getenv("JWT_SECRET")
+
+    fun userRegistration(data: UserDataInput): UserDataInput { //Регистрация юзера
         data.id = null
         try {
             data.id = transaction {
@@ -52,7 +53,7 @@ class UserMutation {
     fun authUser(email: String, password: String): String? {//Авторизация юзера
         val map: List<UserData> = transaction {
             User.select {
-                (User.email eq email) and (User.password eq password)
+                (User.email eq email) and (User.password eq DigestUtils.md5Hex(email + jwtSecret + password))
             }.map { User.toMap(it) }
         }
         val user: UserData?
@@ -75,7 +76,7 @@ class UserMutation {
             return null
     }
 
-    fun refreshUserToken(data : UserData) : UserData{//обновление токена пользователя
+    fun refreshUserToken(data : UserDataInput) : UserDataInput{//обновление токена пользователя
         val values = JwtConfig.tokenDecode(data.refreshToken!!)
         val map : List<UserData> = transaction {
             User.select {User.refreshToken eq data.refreshToken!!}.map { User.toMap(it) }
@@ -101,12 +102,40 @@ class UserMutation {
         }
     }
 
+    fun showUser(id: Int?, name: String?, email: String?, phoneNumber: String?, birthDate: String?, address: String?, orgId: Int?): List<UserData>{
+        val date = DateTime(birthDate)
+        return when {
+            id != null -> {
+                User.select { User.id eq id }.map { User.toMap(it) }
+            }
+            name != null -> {
+                User.select { User.name eq name }.map { User.toMap(it) }
+            }
+            email != null -> {
+                User.select { User.email eq email }.map { User.toMap(it) }
+            }
+            phoneNumber != null -> {
+                User.select { User.phoneNumber eq phoneNumber }.map { User.toMap(it) }
+            }
+            birthDate != null -> {
+                User.select { User.birthDate eq date }.map { User.toMap(it) }
+            }
+            address != null -> {
+                User.select { User.address eq address }.map { User.toMap(it) }
+            }
+            orgId != null -> {
+                User.select { User.orgId eq orgId }.map { User.toMap(it) }
+            }
+            else -> User.selectAll().map { User.toMap(it) }
+        }
+    }
+
     fun createUser(data: UserDataInput){
         transaction {
             User.insert {
-                if (data.id != null) it[id] = data.id
+                if (data.id != null) it[id] = data.id!!
                 it[email] = data.email!!
-                it[password] = data.password!!
+                it[password] = DigestUtils.md5Hex(data.email + jwtSecret + data.password)
                 it[name] = data.name!!
                 it[phoneNumber] = data.phoneNumber!!
                 it[birthDate] = DateTime(data.birthDate)
@@ -128,11 +157,11 @@ class UserMutation {
         }
     }
 
-    fun addApartmentToUser(data: UserApartmentData) {
+    fun addApartmentToUser(data: UserApartmentDataInput) {
         transaction {
             User_Apartment.insert {
-                it[userId] = data.userId
-                it[apartmentId] = data.apartmentId
+                it[userId] = data.userId!!
+                it[apartmentId] = data.apartmentId!!
             }
         }
     }
@@ -140,6 +169,21 @@ class UserMutation {
     fun deleteApartmentToUser(id: Int) {
         transaction {
             User_Apartment.deleteWhere { User_Apartment.id eq id }
+        }
+    }
+
+    fun showUserApartment(id: Int?, userId: Int?, apartmentId: Int?): List<UserApartmentData> {
+        return when {
+            id != null -> {
+                User_Apartment.select { User_Apartment.id eq id }.map { User_Apartment.toMap(it) }
+            }
+            userId != null -> {
+                User_Apartment.select { User_Apartment.userId eq userId }.map { User_Apartment.toMap(it) }
+            }
+            apartmentId != null -> {
+                User_Apartment.select { User_Apartment.apartmentId eq apartmentId }.map { User_Apartment.toMap(it) }
+            }
+            else -> User_Apartment.selectAll().map { User_Apartment.toMap(it) }
         }
     }
 }

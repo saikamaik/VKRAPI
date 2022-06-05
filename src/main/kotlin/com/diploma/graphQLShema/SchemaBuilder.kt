@@ -3,8 +3,8 @@ package com.diploma.graphQLShema
 import com.apurebase.kgraphql.schema.dsl.SchemaBuilder
 import com.diploma.databaseMutationController.*
 import com.diploma.model.*
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.Exception
 
@@ -14,7 +14,7 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("userRegistration"){
         description = "Register a new user "
-        resolver { userInput: UserData ->
+        resolver { userInput: UserDataInput ->
             try{
                 UserMutation().userRegistration(userInput)
                 true
@@ -38,7 +38,7 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("refreshToken"){
         description = "Refresh user token"
-        resolver { userInput: UserData ->
+        resolver { userInput: UserDataInput ->
             try{
                 UserMutation().refreshUserToken(userInput)
                 true
@@ -82,20 +82,44 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllUsers") {
-        description = "Показывает всех пользователей"
-        resolver { ->
+    query("showUserInfo") {
+        description = "Показывает информацию о пользователе по параметрам или всех пользователей"
+        resolver { id: Int?, name: String?, email: String?, phoneNumber: String?, birthDate: String?, address: String?, orgId: Int? ->
             transaction {
-                User.selectAll().map{ User.toShowMap(it)}
+                UserMutation().showUser(id, name, email, phoneNumber, birthDate, address, orgId)
             }
         }
     }
 
-    query("showUserInfo") {
-        description = "Показывает инфу текущего пользователя"
+    mutation("createUserApartment") {
+        description = "Create a new user-apartment relationship"
+        resolver { userInput: UserApartmentDataInput ->
+            try {
+                UserMutation().addApartmentToUser(userInput)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
+    mutation("deleteUser") {
+        description = "Delete a user-apartment by his identifier"
         resolver { id: Int ->
+            try {
+                UserMutation().deleteApartmentToUser(id)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
+    query("showUserApartment") {
+        description = "Показывает отношения таблиц пользователя и помещения по параметрам "
+        resolver { id: Int?, userId: Int?, apartmentId: Int? ->
             transaction {
-                User.select { User.id eq id }.map { User.toShowMap(it)}
+                UserMutation().showUserApartment(id, userId, apartmentId)
             }
         }
     }
@@ -124,11 +148,13 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllOrg") {
-        description = "Показывает всех Org"
-        resolver { ->
+    query("showOrg") {
+        description = "Показывает Организацию по:" +
+                "1. Id" +
+                "2. Названию"
+        resolver { id: Int?, name: String? ->
             transaction {
-                Organization.selectAll().map{ Organization.toMap(it)}
+                OrganizationMutation().showOrg(id, name)
             }
         }
     }
@@ -168,11 +194,14 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllTypes") {
-        description = "Показывает все элементы таблицы Type"
-        resolver { ->
+    query("showType") {
+        description = "Выводит тип счетчика по:" +
+                "1. Id" +
+                "2. Названию" +
+                "3. Все, если не было введено данных"
+        resolver { id: Int?, name: String? ->
             transaction {
-                Type.selectAll().map{ Type.toMap(it)}
+                TypeMutation().showType(id, name)
             }
         }
     }
@@ -212,11 +241,14 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllPositions") {
-        description = "Показывает все элементы таблицы Position"
-        resolver { ->
+    query("showPosition") {
+        description = "Показывает должности по:" +
+                "1. Id" +
+                "2. Названию" +
+                "3. Все, если не введены переменные"
+        resolver { id: Int?, name: String? ->
             transaction {
-                Position.selectAll().map{ Position.toMap(it)}
+                PositionMutation().showPosition(id, name)
             }
         }
     }
@@ -256,11 +288,14 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllMeasureReferences") {
-        description = "Показывает все элементы таблицы MeasureReference"
-        resolver { ->
+    query("showMeasureReference") {
+        description = "Показывает все элементы таблицы MeasureReference, если не введены переменные или по:" +
+                "1. Id" +
+                "2. Полному названию" +
+                "3. Сокращенному названию"
+        resolver { id: Int?, fullName: String?, shortName: String? ->
             transaction {
-                Measure_Reference.selectAll().map{ Measure_Reference.toMap(it)}
+                MeasureReferenceMutation().showMeasureReference(id, fullName, shortName)
             }
         }
     }
@@ -300,11 +335,11 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllApartments") {
-        description = "Показывает все элементы таблицы Apartment"
-        resolver { ->
+    query("showApartment") {
+        description = "Показывает все элементы таблицы Apartment или ищет по параметрам"
+        resolver { id: Int?, fullSize: Int?, liveSize: Int?, category: String?, branchId: Int?, personalAccount: Int? ->
             transaction {
-                Apartment.selectAll().map{ Apartment.toMap(it)}
+                ApartmentMutation().showApartment(id, fullSize, liveSize, category, branchId, personalAccount)
             }
         }
     }
@@ -344,11 +379,11 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllBranchrs") {
+    query("showBranch") {
         description = "Показывает все элементы таблицы Branch"
-        resolver { ->
+        resolver { id: Int?, name: String?, country: String?, city: String?, address: String?, orgId: Int? ->
             transaction {
-                Branch.selectAll().map{ Branch.toMap(it)}
+                BranchMutation().showBranch(id, name, country, city, address, orgId)
             }
         }
     }
@@ -389,10 +424,10 @@ fun SchemaBuilder.schemaValue() {
     }
 
     query("showAllCounterReferences") {
-        description = "Показывает все элементы таблицы CounterReference"
-        resolver { ->
+        description = "Показывает все элементы таблицы CounterReference или ищет по переменной"
+        resolver { id: Int?, number: String?, model: String?, label: String?, serviceDate: String?, typeId: Int? ->
             transaction {
-                Counter_Reference.selectAll().map{ Counter_Reference.toMap(it)}
+                CounterReferenceMutation().showCounterReference(id, number, model, label, serviceDate, typeId)
             }
         }
     }
@@ -432,11 +467,16 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllEmployees") {
-        description = "Показывает все элементы таблицы Employee"
-        resolver { ->
+    query("showEmployee") {
+        description = "Показывает сотрудника по:" +
+                "1. Id" +
+                "2. ФИО" +
+                "3. Id филиала" +
+                "4. Id должности" +
+                "5. Всех, если не введены данные"
+        resolver { id: Int?, name: String?, branchId: Int?, positionId: Int? ->
             transaction {
-                Employee.selectAll().map{ Employee.toMap(it)}
+                EmployeeMutation().showEmployee(id, name, branchId, positionId)
             }
         }
     }
@@ -520,11 +560,15 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllReadings") {
-        description = "Показывает все элементы таблицы Readings"
-        resolver { ->
+    query("showReadings") {
+        description = "Показывает показания счетчиков по:" +
+                "1. id" +
+                "2. id помещения" +
+                "3. id Counter Reference" +
+                "4. Все, если не вводить данных"
+        resolver { id: Int?, apartmentId: Int?, counterRefId: Int? ->
             transaction {
-                Readings.selectAll().map{ Readings.toMap(it)}
+                ReadingsMutation().showReadings(id, apartmentId, counterRefId)
             }
         }
     }
@@ -564,12 +608,73 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllServices") {
-        description = "Показывает все элементы таблицы Service"
-        resolver { ->
+    query("showService") {
+        description = "Показывает услугу: " +
+                "1. Определенную услугу по ID" +
+                "2. Определенной категории по ID категории" +
+                "3. Определенной должности по ID должности" +
+                "4. С определенным названием" +
+                "5. Все, если не вводить данные"
+        resolver {name: String?, serviceId: Int?, categoryId: Int?, positionId: Int? ->
+            transaction { ServiceMutation().showService(name, serviceId, categoryId, positionId) }
+        }
+    }
+
+    query("showServicePrice") {
+        description = "Показывает цену услуги"
+        resolver { branchId: Int, serviceId: Int ->
             transaction {
-                Service.selectAll().map{ Service.toMap(it)}
+                Service_Collection.select{(Service_Collection.serviceId eq serviceId) and (Service_Collection.branchId eq branchId)}.map { Service_Collection.toMap(it) }
             }
+        }
+    }
+
+    mutation("createServiceCollection") {
+        description = "Create a new ServiceCollection"
+        resolver { input: ServiceCollectionDataInput ->
+            try {
+                ServiceCollectionMutation().createServiceCollection(input)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
+    mutation("updateServiceCollection") {
+        description = "Update ServiceCollection"
+        resolver {id: Int, input: ServiceCollectionDataInput ->
+            try{
+                ServiceCollectionMutation().updateServiceCollection(id, input)
+                true
+            } catch (e: Exception) {
+                false
+            } }
+    }
+
+    mutation("deleteServiceCollection") {
+        description = "Delete ServiceCollection by his identifier"
+        resolver { id: Int ->
+            try {
+                ServiceCollectionMutation().deleteServiceCollection(id)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
+    query("showServiceCollection") {
+        description = "Показывает коллекцию услуг: " +
+                "1. Коллекцию по ID филиала" +
+                "2. Коллекцию по ID услуги" +
+                "3. Коллекцию с диапазоном цен от cost1 до cost2" +
+                "4. Коллекцию с ценой больше cost1" +
+                "5. Коллекцию с ценой меньше cost2" +
+                "6. Если введены все данные то поиск идет по всем вышенаписанным фильтрам" +
+                "7. Все, если не вводить данные"
+        resolver {branchId: Int?, serviceId: Int?, cost1: Float?, cost2: Float?  ->
+            transaction { ServiceCollectionMutation().showServiceCollection(branchId, serviceId, cost1, cost2) }
         }
     }
 
@@ -608,11 +713,58 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllServiceRecords") {
-        description = "Показывает все элементы таблицы ServiceRecord"
-        resolver { ->
+    query("showServiceRecord") {
+        description = "Показывает все элементы таблицы ServiceRecord или поиск по параметру"
+        resolver { id: Int?, registrationDate: String?, status: String?, userId: Int?, serviceId: Int?, employeeId: Int? ->
             transaction {
-                Service_Record.selectAll().map{ Service_Record.toMap(it)}
+                ServiceRecordMutation().showServiceRecord(id, registrationDate, status, userId, serviceId, employeeId)
+            }
+        }
+    }
+
+    mutation("createCategory") {
+        description = "Create a new Category"
+        resolver { input: CategoryData ->
+            try {
+                CategoryMutation().createCategory(input)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
+    mutation("updateCategory") {
+        description = "Update Category"
+        resolver {id: Int, input: CategoryData ->
+            try{
+                CategoryMutation().updateCategory(id, input)
+                true
+            } catch (e: Exception) {
+                false
+            } }
+    }
+
+    mutation("deleteCategory") {
+        description = "Delete Category by his identifier"
+        resolver { id: Int ->
+            try {
+                CategoryMutation().deleteCategory(id)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
+    query("showCategory") {
+        description = "Показывает категории по:" +
+                "1. Id" +
+                "2. Имени категории" +
+                "3. Все, если не введены данные"
+        resolver { id: Int?, name: String? ->
+            transaction {
+                CategoryMutation().showCategory(id, name)
             }
         }
     }
@@ -638,7 +790,7 @@ fun SchemaBuilder.schemaValue() {
     }
 
     inputType<BranchDataInput>{
-        description = "The input of the Branchs without the identifier"
+        description = "The input of the Branches without the identifier"
     }
 
     type<CounterReferenceData>{
@@ -670,7 +822,7 @@ fun SchemaBuilder.schemaValue() {
     }
 
     inputType<PaymentHistoryDataInput>{
-        description = "The input of the PaymentHistorys without the identifier"
+        description = "The input of the PaymentHistories without the identifier"
     }
 
     type<PositionData>{
@@ -686,7 +838,7 @@ fun SchemaBuilder.schemaValue() {
     }
 
     inputType<ReadingsDataInput>{
-        description = "The input of the Readingss without the identifier"
+        description = "The input of the Readings without the identifier"
     }
 
     type<ServiceData>{
@@ -719,6 +871,14 @@ fun SchemaBuilder.schemaValue() {
 
     inputType<UserDataInput>{
         description = "The input of the users without the identifier"
+    }
+
+    type<CategoryData>{
+        description = "CategoryData"
+    }
+
+    inputType<CategoryDataInput>{
+        description = "The input of the Categories without the identifier"
     }
 
 

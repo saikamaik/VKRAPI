@@ -24,14 +24,16 @@ data class UserData(
 )
 
 data class UserDataInput(
-    val id: Int? = null,
+    var id: Int? = null,
     val name: String? = "",
     val email: String? = "",
     val password: String? = "",
     val phoneNumber: String? = "",
     val birthDate: String? = "",
     val address: String? = "",
-    var orgId: Int? = 1
+    var orgId: Int? = 1,
+    var refreshToken: String? = "",
+    var accessToken: String? = ""
 )
 
 object User: Table() {
@@ -80,10 +82,22 @@ data class UserApartmentData(
     val apartmentId: Int
 )
 
+data class UserApartmentDataInput(
+    val userId: Int?,
+    val apartmentId: Int?
+)
+
 object User_Apartment: Table() {
     val id = integer("id").autoIncrement()
     val userId = integer("user_id") references User.id
     val apartmentId = integer("apartment_id") references Apartment.id
 
     override val primaryKey = PrimaryKey(id, name = "user_apartment_pk")
+
+    fun toMap(row: ResultRow): UserApartmentData =
+        UserApartmentData(
+            id = row[id],
+            userId = row[userId],
+            apartmentId = row[apartmentId],
+        )
 }

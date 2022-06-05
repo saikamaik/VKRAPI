@@ -1,12 +1,11 @@
 package com.diploma.databaseMutationController
 
 import com.diploma.model.Readings
+import com.diploma.model.ReadingsData
 import com.diploma.model.ReadingsDataInput
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
 class ReadingsMutation {
@@ -39,4 +38,18 @@ class ReadingsMutation {
         }
     }
 
+    fun showReadings(id: Int?, apartmentId: Int?, counterRefId: Int?): List<ReadingsData> {
+        return when {
+            id != null -> {
+                Readings.select { Readings.id eq id }.map { Readings.toMap(it) }
+            }
+            apartmentId != null -> {
+                Readings.select { Readings.apartmentId eq apartmentId }.map { Readings.toMap(it) }
+            }
+            counterRefId != null -> {
+                Readings.select { Readings.counterRefId eq counterRefId }.map { Readings.toMap(it) }
+            }
+            else -> Readings.selectAll().map { Readings.toMap(it) }
+        }
+    }
 }

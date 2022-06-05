@@ -2,6 +2,7 @@ package com.diploma.databaseMutationController
 
 import com.diploma.model.PaymentHistory
 import com.diploma.model.PaymentHistoryDataInput
+import com.diploma.utils.getLocalDate
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -13,11 +14,9 @@ class PaymentHistoryMutation {
     fun createPaymentHistory(data: PaymentHistoryDataInput) {
         transaction {
             PaymentHistory.insert {
-                it[date] = DateTime(data.date)
-                it[cost] = data.cost!!
-                it[penalty] = data.penalty!!
-                it[userId] = data.userId!!
-                it[apartmentId] = data.apartmentId!!
+                it[date] = DateTime(getLocalDate())
+                // it[cost] =
+                it[branchId] = data.branchId!!
             }
         }
     }
@@ -27,9 +26,7 @@ class PaymentHistoryMutation {
             PaymentHistory.update ({ PaymentHistory.id eq id}) {
                 if(data.date != null) it[date] = DateTime(data.date)
                 if(data.cost != null) it[cost] = data.cost
-                if(data.penalty != null) it[penalty] = data.penalty
-                if(data.userId != null) it[userId] = data.userId
-                if(data.apartmentId != null) it[apartmentId] = data.apartmentId
+                if(data.branchId != null) it[branchId] = data.branchId
             }
         }
     }
@@ -38,6 +35,10 @@ class PaymentHistoryMutation {
         transaction {
             PaymentHistory.deleteWhere { PaymentHistory.id eq id }
         }
+    }
+
+    fun calculateCost(branchId: Int) {
+        //TODO
     }
 
 }

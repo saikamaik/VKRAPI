@@ -1,11 +1,8 @@
 package com.diploma.databaseMutationController
 
 import com.diploma.model.*
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 class PositionMutation {
 
@@ -43,6 +40,20 @@ class PositionMutation {
             eq2 = Service.positionId.equals(id)
         }
         return (eq1) or (eq2)
+    }
+
+    fun showPosition(id: Int?, name: String?): List<PositionData> {
+        return when {
+            (id != null && name != null) ->
+                Position
+                    .select {(Position.id eq id) and (Position.name eq name)}
+                    .map { Position.toMap(it) }
+            id != null ->
+                Position.select {Position.id eq id}.map { Position.toMap(it) }
+            name != null ->
+                Position.select {Position.name eq name}.map { Position.toMap(it) }
+            else -> Position.selectAll().map { Position.toMap(it) }
+        }
     }
 
 }

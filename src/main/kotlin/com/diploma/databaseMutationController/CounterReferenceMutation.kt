@@ -1,11 +1,10 @@
 package com.diploma.databaseMutationController
 
+import com.diploma.model.CounterReferenceData
 import com.diploma.model.Counter_Reference
 import com.diploma.model.CounterReferenceDataInput
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 class CounterReferenceMutation {
 
@@ -39,4 +38,27 @@ class CounterReferenceMutation {
         }
     }
 
+    fun showCounterReference(id: Int?, number: String?, model: String?, label: String?, serviceDate: String?, typeId: Int?):List<CounterReferenceData> {
+        return when {
+            id != null -> {
+                Counter_Reference.select { Counter_Reference.id eq id }.map { Counter_Reference.toMap(it) }
+            }
+            number != null -> {
+                Counter_Reference.select { Counter_Reference.number eq number }.map { Counter_Reference.toMap(it) }
+            }
+            model != null -> {
+                Counter_Reference.select { Counter_Reference.model eq model }.map { Counter_Reference.toMap(it) }
+            }
+            label != null -> {
+                Counter_Reference.select { Counter_Reference.label eq label }.map { Counter_Reference.toMap(it) }
+            }
+            serviceDate != null -> {
+                Counter_Reference.select { Counter_Reference.serviceDate eq serviceDate }.map { Counter_Reference.toMap(it) }
+            }
+            typeId != null -> {
+                Counter_Reference.select { Counter_Reference.typeId eq typeId }.map { Counter_Reference.toMap(it) }
+            }
+            else -> Counter_Reference.selectAll().map { Counter_Reference.toMap(it) }
+        }
+    }
 }

@@ -1,11 +1,10 @@
 package com.diploma.databaseMutationController
 
 import com.diploma.model.Apartment
+import com.diploma.model.ApartmentData
 import com.diploma.model.ApartmentDataInput
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 class ApartmentMutation {
 
@@ -41,4 +40,27 @@ class ApartmentMutation {
         }
     }
 
+    fun showApartment(id: Int?, fullSize: Int?, liveSize: Int?, category: String?, branchId: Int?, personalAccount: Int?): List<ApartmentData> {
+        return when {
+            id != null -> {
+                Apartment.select { Apartment.id eq id }.map { Apartment.toMap(it) }
+            }
+            fullSize != null -> {
+                Apartment.select { Apartment.fullSize eq fullSize }.map { Apartment.toMap(it) }
+            }
+            liveSize != null -> {
+                Apartment.select { Apartment.liveSize eq liveSize }.map { Apartment.toMap(it) }
+            }
+            category != null -> {
+                Apartment.select { Apartment.category eq category }.map { Apartment.toMap(it) }
+            }
+            branchId != null -> {
+                Apartment.select { Apartment.branchId eq branchId }.map { Apartment.toMap(it) }
+            }
+            personalAccount != null -> {
+                Apartment.select { Apartment.personalAccount eq personalAccount }.map { Apartment.toMap(it) }
+            }
+            else -> Apartment.selectAll().map { Apartment.toMap(it) }
+        }
+    }
 }

@@ -3,10 +3,8 @@ package com.diploma.databaseMutationController
 import com.diploma.model.Employee
 import com.diploma.model.EmployeeData
 import com.diploma.model.EmployeeDataInput
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 class EmployeeMutation {
 
@@ -40,4 +38,21 @@ class EmployeeMutation {
         }
     }
 
+    fun showEmployee(id: Int?, name: String?, branchId: Int?, positionId: Int?): List<EmployeeData> {
+        return when {
+            id != null -> {
+                Employee.select { Employee.id eq id }.map { Employee.toMap(it) }
+            }
+            name != null -> {
+                Employee.select { Employee.name eq name }.map { Employee.toMap(it) }
+            }
+            branchId != null -> {
+                Employee.select { Employee.branchId eq branchId }.map { Employee.toMap(it) }
+            }
+            positionId != null ->{
+                Employee.select { Employee.positionId eq positionId }.map { Employee.toMap(it) }
+            }
+            else -> Employee.selectAll().map { Employee.toMap(it) }
+        }
+    }
 }
