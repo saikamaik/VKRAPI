@@ -1,0 +1,662 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    """
+    Получение данных о пользователях.
+    Если введено id - поиск конкретного пользователя по идентификатору.
+    Если введено name - поиск конкретного пользователя по ФИО.
+    Если введено email - поиск конкретного пользователя по почте.
+    Если введено phoneNumber - поиск конкретного пользователя по номеру телефона.
+    Если введено birthDate - поиск конкретного пользователя по дате рождения.
+    Если введено address - поиск конкретного пользователя по адресу проживания.
+    Если введено orgId - поиск конкретного пользователя по филиалу.
+    Если ничего не введено, то происходит выбор всех пользователей.
+    """
+    showUserInfo(
+        id: Int,
+        name: String,
+        email: String,
+        phoneNumber: String,
+        birthDate: String,
+        address: String,
+        orgId: Int
+    ): user
+    """
+    Получение данных о зависимостях пользователя и помещения.
+    Если введено id - поиск конкретной зависимости по идентификатору.
+    Если введено userId - поиск зависимостей конкретного пользователя.
+    Если введено apartmentId - поиск зависимостей конкретного помещения.
+    Если ничего не введено, то происходит выбор всех зависимостей пользователя и помещения.
+    """
+    showUserApartment(
+        id: Int,
+        userId: Int,
+        apartmentId: Int
+    ): userApartment
+    """
+    Получение данных об организациях.
+    Если введено id - поиск конкретной организации по идентификатору.
+    Если введено name - поиск конкретной организации по названию.
+    Если ничего не введено, то происходит выбор всех организаций.
+    """
+    showOrg(
+        id: Int,
+        name: String
+    ): organization
+    """
+    Получение данных о типах счетчика.
+    Если введено id - поиск конкретнго типа счетчика по идентификатору.
+    Если введено name - поиск типа счетчика по по названию.
+    Если ничего не введено, то происходит выбор всех типов счетчика.
+    """
+    showType(
+        id: Int,
+        name: String
+    ): counterType
+    """
+    Получение данных о должностях.
+    Если введено id - поиск конкретной должности по идентификатору.
+    Если введено name - поиск должности по названию.
+    Если ничего не введено, то происходит выбор всех должностей.
+    """
+    showPosition(
+        id: Int,
+        name: String
+    ): position
+    """
+    Получение данных о справочнике единиц измерения.
+    Если введено id - поиск конкретной ед. измерения по идентификатору.
+    Если введено fullName - поиск ед. измерения по ее полному названию.
+    Если введено shortName - поиск ед. измерения по ее сокращенному названи. названию.
+    Если ничего не введено, то происходит выбор всех ед. измерения.
+    """
+    showMeasureReference(
+        id: Int,
+        fullName: String,
+        shortName: String
+    ): measureReference
+    """
+    Получение данных о помещении.
+    Если введено Id - происходит выбор конкретного помещения.
+    Если введено fullSize - происходит выбор всех филиалов определенной квадратуры.
+    Если введено liveSize - происходит выбор конкретного помещения по жилой квадратуре.
+    Если введено category - происходит выбор конкретного помещения по его категории.
+    Если введено branchId - происходит выбор конкретного помещения по принадлежности к филиалу.
+    Если введено personalAccount - происходит выбор конкретного помещения по лицевому счету.
+    Если ничего не введено, то происходит выбор всех помещений.
+    """
+    showApartment(
+        id: Int,
+        fullSize: Int,
+        liveSize: Int,
+        category: String,
+        branchId: Int,
+        personalAccount: Int
+    ): apartment
+    """
+    Получение данных о филиалах.
+    Если введено Id - происходит выбор конкретного филиала.
+    Если введено orgId - происходит выбор всех филиалов внутри конкретной организации.
+    Если введено name - происходит выбор конкретного филиала по названию филиала.
+    Если введено country - происходит выбор конкретного филиала по стране местонахождения филиала.
+    Если введено city - происходит выбор конкретного филиала по городу местонахождния филиала.
+    Если введено address - происходит выбор конкретного филиала по адресу местонахождения филиала.
+    Если ничего не введено, то происходит выбор всех филиалов.
+    """
+    showBranch(
+        id: Int,
+        name: String,
+        country: String,
+        city: String,
+        address: String,
+        orgId: Int
+    ): branch
+    """
+    Получение данных о справочнике счетчиков.
+    Если введено Id - происходит выбор конкретного вида счетчика.
+    Если введено number - происходит выбор счетчика по его номеру.
+    Если введено model - происходит выбор счетчика по его модели.
+    Если введено label - происходит выбор счетчика по его бренду.
+    Если введено serviceDate - происходит выбор счетчиков по последней дате обслуживания.
+    Если введено typeId - происходит выбор счетчиков по их типу.
+    Если ничего не введено, то происходит выбор всех видов счетчика.
+    """
+    showCounterReference(
+        id: Int,
+        number: String,
+        model: String,
+        label: String,
+        serviceDate: String,
+        typeId: Int
+    ): counterReference
+    """
+    Получение данных о сотрудниках.
+    Если введено Id - происходит выбор конкретного сотрудника по идентификатору.
+    Если введено name - происходит выбор сотрудников по ФИО.
+    Если введено branchId - происходит выбор всех сотрудников работающих в филиале.
+    Если введено positionId - происходит выбор всех сотрудников определенной должности.
+    Если ничего не введено, то происходит выбор всех сотрудников.
+    """
+    showEmployee(
+        id: Int,
+        name: String,
+        branchId: Int,
+        positionId: Int
+    ): employee
+    """
+    Получение данных о всех квитанциях
+    """
+    showAllPaymentHistories: paymentHistory
+    """
+    Получение данных о показаниях счетчиков.
+    Если введено Id - происходит выбор конкретного показания счетчика по идентификатору.
+    Если введено apartmentId - происходит выбор всех счетчиков в помещении.
+    Если введено counterRefId - происходит выбор определенного счетчика по справочнику.
+    Если ничего не введено, то происходит выбор всех показаний.
+    """
+    showReadings(
+        id: Int,
+        apartmentId: Int,
+        counterRefId: Int
+    ): readings
+    """
+    Получение данных об услугах.
+    Если введено serviceId - происходит выбор конкретной услуги по идентификатору.
+    Если введено name - происходит выбор услуги по названию.
+    Если введено categoryId - происходит выбор всех услуг по категории.
+    Если введено positionId - происходит выбор всех услуг, выполняющихся определенной должностью.
+    Если ничего не введено, то происходит выбор всех услуг.
+    """
+    showService(
+        name: String,
+        serviceId: Int,
+        categoryId: Int,
+        positionId: Int
+    ): service
+    """
+    Получение данных о цене услуги.
+    При вводе branchId и serviceId выводит цену на услугу.
+    """
+    showServicePrice(
+        branchId: Int!,
+        serviceId: Int!
+    ): serviceCollection
+    """
+    Получение данных о справочнике цен на услуги.
+    Если введено branchId - происходит выбор всех цен услуг в филиале.
+    Если введено serviceId - происходит выбор всех цен услуги в разных филиалах.
+    Если введено cost1 - происходит выбор услуг, цена которых больше указанной.
+    Если введено cost2 - происходит выбор услуг, цена которых меньше указанной.
+    Если введено cost1 и cost2 - происходит выбор услуг, цена которой больше cost1 и меньше cost2.
+    Если ничего не введено, то происходит выбор всех цен на услуги.
+    """
+    showServiceCollection(
+        branchId: Int,
+        serviceId: Int,
+        cost1: Float,
+        cost2: Float
+    ): serviceCollection
+    """
+    Получение данных о заявках на услугу.
+    Если введено id - просиходит выбор заявки по идентификатору.
+    Если введено registrationDate - просиходит выбор всех заявок по их дате регистрации.
+    Если введено status - просиходит выбор всех заявок по статусу работы.
+    Если введено userId - просиходит выбор всех заявок пользователя.
+    Если введено serviceId - просиходит выбор всех заявок по услуге.
+    Если введено employeeId - просиходит выбор всех заявок выполняемых сотрудником.
+    Если ничего не введено, то происходит выбор всех заявок на услуги.
+    """
+    showServiceRecord(
+        id: Int,
+        registrationDate: String,
+        status: String,
+        userId: Int,
+        serviceId: Int,
+        employeeId: Int
+    ): serviceRecord
+    """
+    Получение данных о категориях услуг.
+    Если введено id - поиск конкретной категории по идентификатору.
+    Если введено name - поиск категории по названию.
+    """
+    showCategory(
+        id: Int,
+        name: String
+    ): category
+}
+
+type Mutation {
+    "Создание клиента"
+    createUser(
+        name: String
+        email: String
+        password: String
+        phoneNumber: String
+        birthDate: String
+        address: String
+        orgId: Int
+    ): user
+    "Обновление данных клиента"
+    updateUser(
+        id: Int!
+        name: String
+        email: String
+        password: String
+        phoneNumber: String
+        birthDate: String
+        address: String
+        orgId: Int
+    ):user
+    "Удаление клиента"
+    deleteUser(
+        id: Int!
+    ) : String
+
+    "Создание зависимости клиента и помещения"
+    createUserApartment(
+        userId: Int
+        apartmentId: Int
+    ): userApartment
+    "Обновление данных о зависимости клиента и помещения"
+    updateUserApartment(
+        id: Int!
+        userId: Int
+        apartmentId: Int
+    ): userApartment
+    "Удаление зависимости клиента и помещения"
+    deleteUserApartment(
+        id: Int!
+    ) : String
+
+    "Создание организации"
+    createOrg(
+        name: String
+    ): organization
+    "Обновление данных организации"
+    updateOrg(
+        id: Int!
+        name: String
+    ): organization
+    "Удаление организации"
+    deleteOrg(
+        id: Int!
+    ) : String
+
+    "Создание типа счетчика"
+    createType(
+        name: String
+    ): counterType
+    "Обновление данных о типе счетчика"
+    updateType(
+        id: Int!
+        name: String
+    ): counterType
+    "Удаление типа счетчика"
+    deleteType(
+        id: Int!
+    ) : String
+
+    "Создание должности"
+    createPosition(
+        name: String
+    ): position
+    "Обновление данных о должности"
+    updatePosition(
+        id: Int!
+        name: String
+    ): position
+    "Удаление должности"
+    deletePosition(
+        id: Int!
+    ) : String
+
+    "Создание записи в справочнике ед. измерения"
+    createMeasureReference(
+        fullName: String
+        shortName: String
+    ): measureReference
+    "Обновление записи в справочнике ед. измерения"
+    updateMeasureReference(
+        id: Int!
+        fullName: String
+        shortName: String
+    ): measureReference
+    "Удаление записи в справочнике ед. измерения"
+    deleteMeasureReference(
+        id: Int!
+    ) : String
+
+    "Создание помещения"
+    createApartment(
+        fullSize: Int
+        liveSize: Int
+        category: String
+        branchId: Int
+        personalAccount: Int
+    ): apartment
+    "Обновление помещения"
+    updateApartment(
+        id: Int!
+        fullSize: Int
+        liveSize: Int
+        category: String
+        branchId: Int
+        personalAccount: Int
+    ): apartment
+    "Удаление помещения"
+    deleteApartment(
+        id: Int!
+    ) : String
+
+    "Создание филиала"
+    createBranch(
+        name: String
+        country: String
+        city: String
+        address: String
+        phoneNumber: String
+        orgId: Int
+    ): branch
+    "Обновление филиала"
+    updateBranch(
+        id: Int!
+        name: String
+        country: String
+        city: String
+        address: String
+        phoneNumber: String
+        orgId: Int
+    ): branch
+    "Удаление филиала"
+    deleteBranch(
+        id: Int!
+    ) : String
+
+    "Создание записи в справочнике счетчиков"
+    createCounterReference(
+        number: String
+        model: String
+        label: String
+        serviceDate: String
+        typeId: Int
+    ): counterReference
+    "Обновление записи в справочнике счетчиков"
+    updateCounterReference(
+        id: Int!
+        number: String
+        model: String
+        label: String
+        serviceDate: String
+        typeId: Int
+    ): counterReference
+    "Удаление записи в справочнике счетчиков"
+    deleteCounterReference(
+        id: Int!
+    ) : String
+
+    "Создание сотрудника"
+    createEmployee(
+        name: String
+        phoneNumber: String
+        description: String
+        branchId: Int
+        positionId: Int
+    ): employee
+    "Обновление сотрудника"
+    updateEmployee(
+        id: Int!
+        name: String
+        phoneNumber: String
+        description: String
+        branchId: Int
+        positionId: Int
+    ): employee
+    "Удаление сотрудника"
+    deleteEmployee(
+        id: Int!
+    ) : String
+
+    "Создание квитанции"
+    createPaymentHistory(
+        date: String
+        cost: Float
+        branchId: Int
+    ): paymentHistory
+    "Обновление квитанции"
+    updatePaymentHistory(
+        id: Int!
+        date: String
+        cost: Float
+        branchId: Int
+    ): paymentHistory
+    "Удаление квитанции"
+    deletePaymentHistory(
+        id: Int!
+    ) : String
+
+    "Создание показаний счетчика"
+    createReadings(
+        reading: Float
+        date: String
+        apartmentId: Int
+        counterRefId: Int
+    ): readings
+    "Обновление показаний счетчика"
+    updateReadings(
+        id: Int!
+        reading: Float
+        date: String
+        apartmentId: Int
+        counterRefId: Int
+    ): readings
+    "Удаление показаний счетчика"
+    deleteReadings(
+        id: Int!
+    ) : String
+
+    "Создание услуги"
+    createService(
+        name: String
+        customWork: Boolean
+        description: String
+        positionId: Int
+        measureRefId: Int
+        categoryId: Int
+    ): service
+    "Обновление услуги"
+    updateService(
+        id: Int!
+        name: String
+        customWork: Boolean
+        description: String
+        positionId: Int
+        measureRefId: Int
+        categoryId: Int
+    ): service
+    "Удаление услуги"
+    deleteService(
+        id: Int!
+    ) : String
+
+    "Создание "
+    createServiceCollection(
+        branchId: Int
+        serviceId: Int
+        cost: Float
+    ): serviceCollection
+    "Обновление "
+    updateServiceCollection(
+        id: Int!
+        branchId: Int
+        serviceId: Int
+        cost: Float
+    ): serviceCollection
+    "Удаление "
+    deleteServiceCollection(
+        id: Int!
+    ) : String
+
+    "Создание заявки на услугу"
+    createServiceRecord(
+        registrationDate: String
+        status: String
+        userId: Int
+        serviceId: Int
+        employeeId: Int
+    ): serviceRecord
+    "Обновление заявки на услугу"
+    updateServiceRecord(
+        id: Int!
+        registrationDate: String
+        status: String
+        userId: Int
+        serviceId: Int
+        employeeId: Int
+    ): serviceRecord
+    "Удаление заявки на услугу"
+    deleteServiceRecord(
+        id: Int!
+    ) : String
+
+    "Создание категории услуги"
+    createCategory(
+        name: String
+    ): category
+    "Обновление категории услуги"
+    updateCategory(
+        id: Int!
+        name: String
+    ): category
+    "Удаление категории услуги"
+    deleteCategory(
+        id: Int!
+    ) : String
+
+
+}
+
+type apartment{
+    id: Int
+    fullSize: Int
+    liveSize: Int
+    category: String
+    branchId: Int
+    personalAccount: Int
+}
+
+type branch{
+    id: Int
+    name: String
+    country: String
+    city: String
+    address: String
+    phoneNumber: String
+    orgId: Int
+}
+
+type category{
+    id: Int
+    name: String
+}
+
+type counterReference{
+    id: Int
+    number: String
+    model: String
+    label: String
+    serviceDate: String
+    typeId: Int
+}
+
+type employee{
+    id: Int
+    name: String
+    phoneNumber: String
+    description: String
+    branchId: Int
+    positionId: Int
+}
+
+type measureReference{
+    id: Int
+    fullName: String
+    shortName: String
+}
+
+type organization{
+    id: Int
+    name: String
+}
+
+type paymentHistory{
+    id: Int
+    date: String
+    cost: Float
+    branchId: Int
+}
+
+type position{
+    id: Int
+    name: String
+}
+
+type readings{
+    id: Int
+    reading: Float
+    date: String
+    apartmentId: Int
+    counterRefId: Int
+}
+
+type serviceCollection{
+    id: Int
+    branchId: Int
+    serviceId: Int
+    cost: Float
+}
+
+type service{
+    id: Int
+    name: String
+    customWork: Boolean
+    description: String
+    positionId: Int
+    measureRefId: Int
+    categoryId: Int
+}
+
+type serviceRecord{
+    id: Int
+    registrationDate: String
+    status: String
+    userId: Int
+    serviceId: Int
+    employeeId: Int
+}
+
+type counterType{
+    id: Int
+    name: String
+}
+
+type user{
+    id: Int
+    name: String
+    email: String
+    password: String
+    phoneNumber: String
+    birthDate: String
+    address: String
+    orgId: Int
+    refreshToken: String
+    accessToken: String
+}
+
+type userApartment{
+    id: Int
+    userId: Int
+    apartmentId: Int
+}

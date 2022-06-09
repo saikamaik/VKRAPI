@@ -2,13 +2,14 @@ package com.diploma.databaseMutationController
 
 import com.diploma.model.Category
 import com.diploma.model.CategoryData
+import com.diploma.model.CategoryDataInput
 import com.diploma.model.Readings
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class CategoryMutation {
 
-    fun createCategory(data: CategoryData) {
+    fun createCategory(data: CategoryDataInput) {
         transaction {
             Category.insert {
                 it[name] = data.name!!
@@ -16,7 +17,7 @@ class CategoryMutation {
         }
     }
 
-    fun updateCategory(id: Int, data: CategoryData) {
+    fun updateCategory(id: Int, data: CategoryDataInput) {
         transaction {
             Category.update({ Category.id eq id }) {
                 it[name] = data.name!!

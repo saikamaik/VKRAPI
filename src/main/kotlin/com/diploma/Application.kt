@@ -28,7 +28,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 val jwtConfig = JwtConfig
-var graphQLRequest: GraphQLRequest? = null
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
@@ -45,7 +44,6 @@ fun Application.module(testing: Boolean = false) {
         anyHost()
         method(HttpMethod.Options)
         method(HttpMethod.Get)
-        header("Authorization")
         allowSameOrigin = true
         allowCredentials = true
 //        allowNonSimpleContentTypes = true
@@ -66,21 +64,21 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
 
-        route("/") {
-            post("/graphql") {
-                graphQLRequest = call.receive<GraphQLRequest>()
-                if (("authUser" in graphQLRequest!!.query) or ("userRegistration" in graphQLRequest!!.query)) {
-                    KGraphQL.schema { schemaValue() }.execute(graphQLRequest!!.query)
-                } else {
-                    call.respond(HttpStatusCode(401, "not authorized(("))
-                }
-            }
-            authenticate {
+//        route("/") {
+//            post("/graphql") {
+//                graphQLRequest = call.receive<GraphQLRequest>()
+//                if (("authUser" in graphQLRequest!!.query) or ("userRegistration" in graphQLRequest!!.query)) {
+//                    KGraphQL.schema { schemaValue() }.execute(graphQLRequest!!.query)
+//                } else {
+//                    call.respond(HttpStatusCode(401, "not authorized(("))
+//                }
+//            }
+//            authenticate {
                 post("/graphql") {
                     val graphqlRequest = call.receive<GraphQLRequest>()
                     KGraphQL.schema { schemaValue() }.execute(graphqlRequest.query)
                 }
-            }
+//            }
 
             get("/user") {
                 val users = transaction {
@@ -90,5 +88,5 @@ fun Application.module(testing: Boolean = false) {
             }
         }
     }
-}
+//}
 

@@ -10,43 +10,6 @@ import kotlin.Exception
 
 fun SchemaBuilder.schemaValue() {
 
-//    init()
-
-    mutation("userRegistration"){
-        description = "Register a new user "
-        resolver { userInput: UserDataInput ->
-            try{
-                UserMutation().userRegistration(userInput)
-                true
-            } catch (e: Exception) {
-                false
-            }
-        }
-    }
-
-    mutation("authUser"){
-        description = "Authenticate user"
-        resolver { email: String, password: String ->
-            try{
-                UserMutation().authUser(email, password)
-                true
-            } catch (e: Exception) {
-                false
-            }
-        }
-    }
-
-    mutation("refreshToken"){
-        description = "Refresh user token"
-        resolver { userInput: UserDataInput ->
-            try{
-                UserMutation().refreshUserToken(userInput)
-                true
-            } catch (e: Exception) {
-                false
-            } }
-    }
-
     mutation("createUser") {
         description = "Create a new user"
         resolver { userInput: UserDataInput ->
@@ -103,7 +66,7 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    mutation("deleteUser") {
+    mutation("deleteUserApartment") {
         description = "Delete a user-apartment by his identifier"
         resolver { id: Int ->
             try {
@@ -423,7 +386,7 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    query("showAllCounterReferences") {
+    query("showCounterReference") {
         description = "Показывает все элементы таблицы CounterReference или ищет по переменной"
         resolver { id: Int?, number: String?, model: String?, label: String?, serviceDate: String?, typeId: Int? ->
             transaction {
@@ -724,7 +687,7 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("createCategory") {
         description = "Create a new Category"
-        resolver { input: CategoryData ->
+        resolver { input: CategoryDataInput ->
             try {
                 CategoryMutation().createCategory(input)
                 true
@@ -736,7 +699,7 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateCategory") {
         description = "Update Category"
-        resolver {id: Int, input: CategoryData ->
+        resolver {id: Int, input: CategoryDataInput ->
             try{
                 CategoryMutation().updateCategory(id, input)
                 true
