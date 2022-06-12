@@ -43,10 +43,12 @@ fun Application.module(testing: Boolean = false) {
     install(CORS) {
         anyHost()
         method(HttpMethod.Options)
-        method(HttpMethod.Get)
+        header(HttpHeaders.ContentType)
+        header(HttpHeaders.AccessControlAllowHeaders)
+        header(HttpHeaders.AccessControlAllowOrigin)
         allowSameOrigin = true
         allowCredentials = true
-//        allowNonSimpleContentTypes = true
+        allowNonSimpleContentTypes = true
     }
     install(CallLogging)
     install(ContentNegotiation) {
