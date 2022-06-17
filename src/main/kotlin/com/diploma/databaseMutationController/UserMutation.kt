@@ -130,10 +130,9 @@ class UserMutation {
         }
     }
 
-    fun createUser(data: UserDataInput){
-        transaction {
+    fun createUser(data: UserDataInput): UserDataInput{
+        data.id = transaction {
             User.insert {
-                if (data.id != null) it[id] = data.id!!
                 it[email] = data.email!!
                 it[password] = DigestUtils.md5Hex(data.email + jwtSecret + data.password)
                 it[name] = data.name!!
@@ -143,16 +142,16 @@ class UserMutation {
                 it[orgId] = data.orgId!!
             }[User.id]
         }
+        return data
     }
 
-    fun updateUser(id: Int, data: UserDataInput){
+    fun updateUser(id: Int, name: String?, birthDate: String?, phoneNumber: String?, email: String?){
         transaction {
             User.update({ User.id eq id }) {
-                if(data.password != null) it[password] = data.password
-                if(data.name != null) it[name] = data.name
-                if(data.birthDate != null) it[birthDate] = DateTime(data.birthDate)
-                if(data.phoneNumber != null) it[phoneNumber] = data.phoneNumber
-                if(data.email != null) it[email] = data.email
+                if(name != null) it[User.name] = name
+                if(birthDate != null) it[User.birthDate] = DateTime(birthDate)
+                if(phoneNumber != null) it[User.phoneNumber] = phoneNumber
+                if(email != null) it[User.email] = email
             }
         }
     }
@@ -164,6 +163,15 @@ class UserMutation {
                 it[apartmentId] = data.apartmentId!!
             }
         }
+    }
+
+    fun updateApartmentToUser(id:Int, userId: Int?, apartmentId: Int?) {
+        transaction {
+            User_Apartment.update ({ User_Apartment.id eq id }) {
+                if (userId!=null) it[User_Apartment.userId] = userId
+                if (apartmentId!=null) it[User_Apartment.apartmentId] = apartmentId
+                }
+            }
     }
 
     fun deleteApartmentToUser(id: Int) {

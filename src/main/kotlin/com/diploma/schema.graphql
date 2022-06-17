@@ -231,13 +231,7 @@ type Query {
 type Mutation {
     "Создание клиента"
     createUser(
-        name: String
-        email: String
-        password: String
-        phoneNumber: String
-        birthDate: String
-        address: String
-        orgId: Int
+        userInput: [userInput]
     ): user
     "Обновление данных клиента"
     updateUser(
@@ -257,8 +251,7 @@ type Mutation {
 
     "Создание зависимости клиента и помещения"
     createUserApartment(
-        userId: Int
-        apartmentId: Int
+        userApartmentInput: [userApartmentInput]
     ): userApartment
     "Обновление данных о зависимости клиента и помещения"
     updateUserApartment(
@@ -273,7 +266,7 @@ type Mutation {
 
     "Создание организации"
     createOrg(
-        name: String
+        organizationInput: [organizationInput]
     ): organization
     "Обновление данных организации"
     updateOrg(
@@ -287,7 +280,7 @@ type Mutation {
 
     "Создание типа счетчика"
     createType(
-        name: String
+        userInput: [categoryInput]
     ): counterType
     "Обновление данных о типе счетчика"
     updateType(
@@ -301,7 +294,7 @@ type Mutation {
 
     "Создание должности"
     createPosition(
-        name: String
+        userInput: [positionInput]
     ): position
     "Обновление данных о должности"
     updatePosition(
@@ -315,8 +308,7 @@ type Mutation {
 
     "Создание записи в справочнике ед. измерения"
     createMeasureReference(
-        fullName: String
-        shortName: String
+        userInput: [measureReferenceInput]
     ): measureReference
     "Обновление записи в справочнике ед. измерения"
     updateMeasureReference(
@@ -331,11 +323,7 @@ type Mutation {
 
     "Создание помещения"
     createApartment(
-        fullSize: Int
-        liveSize: Int
-        category: String
-        branchId: Int
-        personalAccount: Int
+        userInput: [apartmentInput]
     ): apartment
     "Обновление помещения"
     updateApartment(
@@ -351,16 +339,11 @@ type Mutation {
         id: Int!
     ) : String
 
-    "Создание филиала"
+    "Создание жилого дома"
     createBranch(
-        name: String
-        country: String
-        city: String
-        address: String
-        phoneNumber: String
-        orgId: Int
+        userInput: [branchInput]
     ): branch
-    "Обновление филиала"
+    "Обновление жилого дома"
     updateBranch(
         id: Int!
         name: String
@@ -370,18 +353,14 @@ type Mutation {
         phoneNumber: String
         orgId: Int
     ): branch
-    "Удаление филиала"
+    "Удаление жилого дома"
     deleteBranch(
         id: Int!
     ) : String
 
     "Создание записи в справочнике счетчиков"
     createCounterReference(
-        number: String
-        model: String
-        label: String
-        serviceDate: String
-        typeId: Int
+        userInput: [counterReferenceInput]
     ): counterReference
     "Обновление записи в справочнике счетчиков"
     updateCounterReference(
@@ -399,11 +378,7 @@ type Mutation {
 
     "Создание сотрудника"
     createEmployee(
-        name: String
-        phoneNumber: String
-        description: String
-        branchId: Int
-        positionId: Int
+        userInput: [employeeInput]
     ): employee
     "Обновление сотрудника"
     updateEmployee(
@@ -421,9 +396,10 @@ type Mutation {
 
     "Создание квитанции"
     createPaymentHistory(
-        date: String
-        cost: Float
-        branchId: Int
+        date: String,
+        cost: Float,
+        branchId: Int!,
+        userId: Int!
     ): paymentHistory
     "Обновление квитанции"
     updatePaymentHistory(
@@ -439,10 +415,7 @@ type Mutation {
 
     "Создание показаний счетчика"
     createReadings(
-        reading: Float
-        date: String
-        apartmentId: Int
-        counterRefId: Int
+        userInput: [readingsInput]
     ): readings
     "Обновление показаний счетчика"
     updateReadings(
@@ -459,12 +432,7 @@ type Mutation {
 
     "Создание услуги"
     createService(
-        name: String
-        customWork: Boolean
-        description: String
-        positionId: Int
-        measureRefId: Int
-        categoryId: Int
+        userInput: [serviceInput]
     ): service
     "Обновление услуги"
     updateService(
@@ -481,11 +449,9 @@ type Mutation {
         id: Int!
     ) : String
 
-    "Создание "
+    "Создание справочника цен на услуги"
     createServiceCollection(
-        branchId: Int
-        serviceId: Int
-        cost: Float
+        userInput: [serviceCollectionInput]
     ): serviceCollection
     "Обновление "
     updateServiceCollection(
@@ -501,11 +467,7 @@ type Mutation {
 
     "Создание заявки на услугу"
     createServiceRecord(
-        registrationDate: String
-        status: String
-        userId: Int
-        serviceId: Int
-        employeeId: Int
+        userInput: [serviceRecordInput]
     ): serviceRecord
     "Обновление заявки на услугу"
     updateServiceRecord(
@@ -523,7 +485,7 @@ type Mutation {
 
     "Создание категории услуги"
     createCategory(
-        name: String
+        userInput: [categoryInput]
     ): category
     "Обновление категории услуги"
     updateCategory(
@@ -538,6 +500,14 @@ type Mutation {
 
 }
 
+input apartmentInput{
+    fullSize: Int
+    liveSize: Int
+    category: String
+    branchId: Int
+    personalAccount: Int
+}
+
 type apartment{
     id: Int
     fullSize: Int
@@ -545,6 +515,15 @@ type apartment{
     category: String
     branchId: Int
     personalAccount: Int
+}
+
+input branchInput{
+    name: String
+    country: String
+    city: String
+    address: String
+    phoneNumber: String
+    orgId: Int
 }
 
 type branch{
@@ -557,9 +536,21 @@ type branch{
     orgId: Int
 }
 
+input categoryInput{
+    name: String
+}
+
 type category{
     id: Int
     name: String
+}
+
+input counterReferenceInput{
+    number: String
+    model: String
+    label: String
+    serviceDate: String
+    typeId: Int
 }
 
 type counterReference{
@@ -571,6 +562,14 @@ type counterReference{
     typeId: Int
 }
 
+input employeeInput{
+    name: String
+    phoneNumber: String
+    description: String
+    branchId: Int
+    positionId: Int
+}
+
 type employee{
     id: Int
     name: String
@@ -580,15 +579,30 @@ type employee{
     positionId: Int
 }
 
+input measureReferenceInput{
+    fullName: String
+    shortName: String
+}
+
 type measureReference{
     id: Int
     fullName: String
     shortName: String
 }
 
+input organizationInput{
+    name: String
+}
+
 type organization{
     id: Int
     name: String
+}
+
+input paymentHistoryInput{
+    date: String
+    cost: Float
+    branchId: Int
 }
 
 type paymentHistory{
@@ -598,9 +612,20 @@ type paymentHistory{
     branchId: Int
 }
 
+input positionInput{
+    name: String
+}
+
 type position{
     id: Int
     name: String
+}
+
+input readingsInput{
+    reading: Float
+    date: String
+    apartmentId: Int
+    counterRefId: Int
 }
 
 type readings{
@@ -611,11 +636,26 @@ type readings{
     counterRefId: Int
 }
 
+input serviceCollectionInput{
+    branchId: Int
+    serviceId: Int
+    cost: Float
+}
+
 type serviceCollection{
     id: Int
     branchId: Int
     serviceId: Int
     cost: Float
+}
+
+input serviceInput{
+    name: String
+    customWork: Boolean
+    description: String
+    positionId: Int
+    measureRefId: Int
+    categoryId: Int
 }
 
 type service{
@@ -628,6 +668,14 @@ type service{
     categoryId: Int
 }
 
+input serviceRecordInput{
+    registrationDate: String
+    status: String
+    userId: Int
+    serviceId: Int
+    employeeId: Int
+}
+
 type serviceRecord{
     id: Int
     registrationDate: String
@@ -637,9 +685,23 @@ type serviceRecord{
     employeeId: Int
 }
 
+input counterTypeInput{
+    name: String
+}
+
 type counterType{
     id: Int
     name: String
+}
+
+input userInput{
+    name: String
+    email: String
+    password: String
+    phoneNumber: String
+    birthDate: String
+    address: String
+    orgId: Int
 }
 
 type user{
@@ -653,6 +715,11 @@ type user{
     orgId: Int
     refreshToken: String
     accessToken: String
+}
+
+input userApartmentInput{
+    userId: Int
+    apartmentId: Int
 }
 
 type userApartment{

@@ -18,12 +18,12 @@ class ServiceCollectionMutation {
         }
     }
 
-    fun updateServiceCollection(id: Int, data: ServiceCollectionDataInput) {
+    fun updateServiceCollection(id: Int, branchId: Int?, serviceId: Int?, cost: Float?) {
         transaction {
             Service_Collection.update ({ Service_Collection.id eq id}) {
-                if(data.branchId != null) it[branchId] = data.branchId!!
-                if(data.serviceId != null) it[serviceId] = data.serviceId!!
-                if(data.cost != null) it[cost] = data.cost!!
+                if(branchId != null) it[Service_Collection.branchId] = branchId
+                if(serviceId != null) it[Service_Collection.serviceId] = serviceId
+                if(cost != null) it[Service_Collection.cost] = cost
             }
         }
     }

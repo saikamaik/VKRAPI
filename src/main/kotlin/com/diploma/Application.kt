@@ -54,6 +54,7 @@ fun Application.module(testing: Boolean = false) {
     install(ContentNegotiation) {
         gson()
     }
+    install(DoubleReceive)
 
     install(Authentication) {
         jwt {
@@ -76,10 +77,12 @@ fun Application.module(testing: Boolean = false) {
 //                }
 //            }
 //            authenticate {
+            header("Content-type", "application/json; charset=utf-8") {
                 post("/graphql") {
                     val graphqlRequest = call.receive<GraphQLRequest>()
                     KGraphQL.schema { schemaValue() }.execute(graphqlRequest.query)
                 }
+            }
 //            }
 
             get("/user") {

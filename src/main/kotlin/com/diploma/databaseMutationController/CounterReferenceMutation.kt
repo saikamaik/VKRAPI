@@ -20,14 +20,14 @@ class CounterReferenceMutation {
         }
     }
 
-    fun updateCounterReference(id: Int, data: CounterReferenceDataInput) {
+    fun updateCounterReference(id: Int, number: String?, model: String?, label: String?, serviceDate: String?, typeId: Int?) {
         transaction {
             Counter_Reference.update ({Counter_Reference.id eq id}) {
-                if(data.number != null) it[number] = data.number
-                if(data.model != null) it[model] = data.model
-                if(data.label != null) it[label] = data.label
-                if(data.serviceDate != null) it[serviceDate] = data.serviceDate
-                if(data.typeId != null) it[typeId] = data.typeId
+                if(number != null) it[Counter_Reference.number] = number
+                if(model != null) it[Counter_Reference.model] = model
+                if(label != null) it[Counter_Reference.label] = label
+                if(serviceDate != null) it[Counter_Reference.serviceDate] = serviceDate
+                if(typeId != null) it[Counter_Reference.typeId] = typeId
             }
         }
     }

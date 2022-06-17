@@ -22,14 +22,14 @@ class ServiceRecordMutation {
         }
     }
 
-    fun updateServiceRecord(id: Int, data: ServiceRecordDataInput) {
+    fun updateServiceRecord(id: Int, registrationDate: String?, status: String?, userId: Int?, serviceId: Int?, employeeId: Int?) {
         transaction {
             Service_Record.update ({ Service_Record.id eq id}) {
-                it[registrationDate] = DateTime(data.registrationDate)
-                it[status] = data.status
-                it[userId] = data.userId
-                it[serviceId] = data.serviceId
-                it[employeeId] = data.employeeId
+                if (registrationDate != null) it[Service_Record.registrationDate] = DateTime(registrationDate)
+                if (status != null) it[Service_Record.status] = status
+                if (userId != null) it[Service_Record.userId] = userId
+                if (serviceId != null) it[Service_Record.serviceId] = serviceId
+                if (employeeId != null) it[Service_Record.employeeId] = employeeId
             }
         }
     }

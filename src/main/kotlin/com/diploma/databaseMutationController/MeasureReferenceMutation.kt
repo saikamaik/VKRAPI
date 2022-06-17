@@ -16,11 +16,11 @@ class MeasureReferenceMutation {
         }
     }
 
-    fun updateMeasureReference(id: Int, data: MeasureReferenceDataInput) {
+    fun updateMeasureReference(id: Int, fullName: String?, shortName: String?) {
         transaction {
                 Measure_Reference.update({ Measure_Reference.id eq id}) {
-                    it[fullName] = data.fullName!!
-                    it[shortName] = data.shortName!!
+                    if (fullName!=null) it[Measure_Reference.fullName] = fullName
+                    if (shortName!=null) it[Measure_Reference.shortName] = shortName
                 }
             }
         }

@@ -31,17 +31,4 @@ object DatabaseFactory {
         Database.connect(HikariDataSource(config))
     }
 
-
-//    fun dbInnit(){
-//        props.setProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource")
-//        props.setProperty("dataSource.user", "postgres")
-//        props.setProperty("dataSource.password", "847261935")
-//        props.setProperty("dataSource.databaseName", "postgres")
-//        props.setProperty("maximumPoolSize", "10")
-//        props["dataSource.logWriter"] = PrintWriter(System.out)
-//        val config = HikariConfig(props)
-//        config.schema = "vkr"
-//        Database.connect(HikariDataSource(config))
-//    }
-
 }

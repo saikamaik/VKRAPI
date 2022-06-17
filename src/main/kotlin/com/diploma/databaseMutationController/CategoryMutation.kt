@@ -17,10 +17,10 @@ class CategoryMutation {
         }
     }
 
-    fun updateCategory(id: Int, data: CategoryDataInput) {
+    fun updateCategory(id: Int, name: String?) {
         transaction {
             Category.update({ Category.id eq id }) {
-                it[name] = data.name!!
+                if (name != null) it[Category.name] = name
             }
         }
     }

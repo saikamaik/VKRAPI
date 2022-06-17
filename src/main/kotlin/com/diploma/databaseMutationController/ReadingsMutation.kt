@@ -21,13 +21,13 @@ class ReadingsMutation {
         }
     }
 
-    fun updateReadings(id: Int, data: ReadingsDataInput) {
+    fun updateReadings(id: Int, reading: Float?, date: String?, apartmentId: Int?, counterRefId: Int?) {
         transaction {
             Readings.update ({ Readings.id eq id}) {
-                if(data.reading != null) it[reading] = data.reading
-                if(data.date != null) it[date] = DateTime(data.date)
-                if(data.apartmentId != null) it[apartmentId] = data.apartmentId
-                if(data.counterRefId != null) it[counterRefId] = data.counterRefId
+                if(reading != null) it[Readings.reading] = reading
+                if(date != null) it[Readings.date] = DateTime(date)
+                if(apartmentId != null) it[Readings.apartmentId] = apartmentId
+                if(counterRefId != null) it[Readings.counterRefId] = counterRefId
             }
         }
     }

@@ -20,14 +20,14 @@ class EmployeeMutation {
         }
     }
 
-    fun updateEmployee(id: Int, data: EmployeeDataInput) {
+    fun updateEmployee(id: Int, name: String?, phoneNumber: String?, description: String?, branchId: Int?, positionId: Int?) {
         transaction {
             Employee.update({Employee.id eq id}) {
-                if (data.name != null) it[name] = data.name
-                if (data.phoneNumber != null) it[phoneNumber] = data.phoneNumber
-                if (data.description != null) it[description] = data.description
-                if (data.branchId != null) it[branchId] = data.branchId
-                if (data.positionId != null) it[positionId] = data.positionId
+                if (name != null) it[Employee.name] = name
+                if (phoneNumber != null) it[Employee.phoneNumber] = phoneNumber
+                if (description != null) it[Employee.description] = description
+                if (branchId != null) it[Employee.branchId] = branchId
+                if (positionId != null) it[Employee.positionId] = positionId
             }
         }
     }

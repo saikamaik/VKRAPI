@@ -21,15 +21,15 @@ class BranchMutation {
         }
     }
 
-    fun updateBranch(id: Int, data: BranchDataInput) {
+    fun updateBranch(id: Int, name: String?, country: String?, city:String?, address: String?, phoneNumber: String?, orgId: Int?) {
         transaction {
             Branch.update({Branch.id eq id}) {
-                if (data.name!= null) it[name] = data.name
-                if (data.country!= null) it[country] = data.country
-                if (data.city!= null) it[city] = data.city
-                if (data.address!= null) it[address] = data.address
-                if (data.phoneNumber!= null) it[phoneNumber] = data.phoneNumber
-                if (data.orgId!= null) it[orgId] = data.orgId
+                if (name!= null) it[Branch.name] = name
+                if (country!= null) it[Branch.country] = country
+                if (city!= null) it[Branch.city] = city
+                if (address!= null) it[Branch.address] = address
+                if (phoneNumber!= null) it[Branch.phoneNumber] = phoneNumber
+                if (orgId!= null) it[Branch.orgId] = orgId
             }
         }
     }

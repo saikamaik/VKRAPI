@@ -21,14 +21,14 @@ class ServiceMutation {
         }
     }
 
-    fun updateService(id: Int, data: ServiceDataInput) {
+    fun updateService(id: Int, name: String?, customWork: Boolean?, description: String?, positionId: Int?, measureRefId: Int?) {
         transaction {
             Service.update ({Service.id eq id}) {
-                if(data.name != null) it[name] = data.name
-                if(data.customWork != null) it[customWork] = data.customWork
-                if(data.description != null) it[description] = data.description
-                if(data.positionId != null) it[positionId] = data.positionId
-                if(data.measureRefId != null) it[measureRefId] = data.measureRefId
+                if(name != null) it[Service.name] = name
+                if(customWork != null) it[Service.customWork] = customWork
+                if(description != null) it[Service.description] = description
+                if(positionId != null) it[Service.positionId] = positionId
+                if(measureRefId != null) it[Service.measureRefId] = measureRefId
             }
         }
     }

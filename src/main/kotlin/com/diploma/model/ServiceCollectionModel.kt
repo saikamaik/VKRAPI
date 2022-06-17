@@ -31,4 +31,8 @@ object Service_Collection: Table() {
             serviceId = row[serviceId],
             cost = row[cost]
         )
+
+    fun toCostMap(row: ResultRow): Float {
+        return row[this.cost]
+    }
 }

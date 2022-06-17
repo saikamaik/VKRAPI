@@ -6,16 +6,16 @@ import org.jetbrains.exposed.sql.Table
 
 data class ApartmentData(
     var id: Int? = null,
-    var fullSize: Int,
-    var liveSize: Int,
+    var fullSize: Float,
+    var liveSize: Float,
     var category: String,
     var branchId: Int,
     var personalAccount: Int
 )
 
 data class ApartmentDataInput(
-    var fullSize: Int? = null,
-    var liveSize: Int? = null,
+    var fullSize: Float? = null,
+    var liveSize: Float? = null,
     var category: String? = "",
     var branchId: Int? = null,
     var personalAccount: Int? = null
@@ -23,8 +23,8 @@ data class ApartmentDataInput(
 
 object Apartment : Table() {
     val id = integer("id").autoIncrement()
-    val fullSize = integer("full_size")
-    val liveSize = integer("live_size")
+    val fullSize = float("full_size")
+    val liveSize = float("live_size")
     val category = varchar("category", 255)
     val personalAccount = integer("personal_account")
     val branchId = integer("branch_id") references Branch.id

@@ -14,10 +14,10 @@ class OrganizationMutation {
         }
     }
 
-    fun updateOrg(data: OrganizationData) {
+    fun updateOrg(id: Int, name: String?) {
         transaction {
-            Organization.update({ Organization.id eq data.id!! }) {
-                it[name] = data.name!!
+            Organization.update({ Organization.id eq id }) {
+                if (name!=null) it[Organization.name] = name
             }
         }
     }

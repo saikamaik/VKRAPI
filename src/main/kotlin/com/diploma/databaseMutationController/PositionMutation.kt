@@ -14,10 +14,10 @@ class PositionMutation {
         }
     }
 
-    fun updatePosition(id: Int, data: PositionData) {
+    fun updatePosition(id: Int, name: String?) {
         transaction {
             Position.update({Position.id eq id}) {
-                it[name] = data.name
+                if (name!=null) it[Position.name] = name
             }
         }
     }

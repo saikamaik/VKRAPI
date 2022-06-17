@@ -4,7 +4,6 @@ import com.apurebase.kgraphql.schema.dsl.SchemaBuilder
 import com.diploma.databaseMutationController.*
 import com.diploma.model.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.Exception
 
@@ -24,9 +23,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateUser") {
         description = "Update user"
-        resolver { id: Int, userInput: UserDataInput ->
+        resolver { id: Int, name: String?, birthDate: String?, email: String?, phoneNumber: String? ->
             try{
-                UserMutation().updateUser(id, userInput)
+                UserMutation().updateUser(id, name, birthDate, phoneNumber, email)
             true
         } catch (e: Exception) {
         false
@@ -99,6 +98,17 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
+    mutation("updateOrg") {
+        description = "Update org"
+        resolver { id: Int, name: String? ->
+            try{
+                OrganizationMutation().updateOrg(id, name)
+                true
+            } catch (e: Exception) {
+                false
+            } }
+    }
+
     mutation("deleteOrg") {
         description = "Delete org by it identifier"
         resolver { id: Int ->
@@ -136,9 +146,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateType") {
         description = "Update Type"
-        resolver {id: Int, typeInput: TypeDataInput ->
+        resolver {id: Int, name: String? ->
             try{
-                TypeMutation().updateType(id, typeInput)
+                TypeMutation().updateType(id, name)
                 true
             } catch (e: Exception) {
                 false
@@ -183,9 +193,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updatePosition") {
         description = "Update Position"
-        resolver {id: Int, input: PositionData ->
+        resolver {id: Int, name: String? ->
             try{
-                PositionMutation().updatePosition(id, input)
+                PositionMutation().updatePosition(id, name)
                 true
             } catch (e: Exception) {
                 false
@@ -230,9 +240,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateMeasureReference") {
         description = "Update MeasureReference"
-        resolver {id: Int, input: MeasureReferenceDataInput ->
+        resolver {id: Int, fullName: String?, shortName: String? ->
             try{
-                MeasureReferenceMutation().updateMeasureReference(id, input)
+                MeasureReferenceMutation().updateMeasureReference(id, fullName, shortName)
                 true
             } catch (e: Exception) {
                 false
@@ -277,9 +287,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateApartment") {
         description = "Update Apartment"
-        resolver {id: Int, input: ApartmentDataInput ->
+        resolver {id: Int, fullSize: Float?, liveSize: Float?, category: String?, branchId: Int?, personalAccount: Int? ->
             try{
-                ApartmentMutation().updateApartment(id, input)
+                ApartmentMutation().updateApartment(id, fullSize, liveSize, category, branchId, personalAccount)
                 true
             } catch (e: Exception) {
                 false
@@ -300,7 +310,7 @@ fun SchemaBuilder.schemaValue() {
 
     query("showApartment") {
         description = "Показывает все элементы таблицы Apartment или ищет по параметрам"
-        resolver { id: Int?, fullSize: Int?, liveSize: Int?, category: String?, branchId: Int?, personalAccount: Int? ->
+        resolver { id: Int?, fullSize: Float?, liveSize: Float?, category: String?, branchId: Int?, personalAccount: Int? ->
             transaction {
                 ApartmentMutation().showApartment(id, fullSize, liveSize, category, branchId, personalAccount)
             }
@@ -321,9 +331,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateBranch") {
         description = "Update Branch"
-        resolver {id: Int, input: BranchDataInput ->
+        resolver {id: Int, name: String?, country: String?, city:String?, address: String?, phoneNumber: String?, orgId: Int? ->
             try{
-                BranchMutation().updateBranch(id, input)
+                BranchMutation().updateBranch(id, name, country, city, address, phoneNumber, orgId)
                 true
             } catch (e: Exception) {
                 false
@@ -365,9 +375,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateCounterReference") {
         description = "Update CounterReference"
-        resolver {id: Int, input: CounterReferenceDataInput ->
+        resolver {id: Int, number: String?, model: String?, label: String?, serviceDate: String?, typeId: Int? ->
             try{
-                CounterReferenceMutation().updateCounterReference(id, input)
+                CounterReferenceMutation().updateCounterReference(id, number, model, label, serviceDate, typeId)
                 true
             } catch (e: Exception) {
                 false
@@ -409,9 +419,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateEmployee") {
         description = "Update Employee"
-        resolver {id: Int, input: EmployeeDataInput ->
+        resolver {id: Int, name: String?, phoneNumber: String?, description: String?, branchId: Int?, positionId: Int? ->
             try{
-                EmployeeMutation().updateEmployee(id, input)
+                EmployeeMutation().updateEmployee(id, name, phoneNumber, description, branchId, positionId)
                 true
             } catch (e: Exception) {
                 false
@@ -446,9 +456,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("createPaymentHistory") {
         description = "Create a new PaymentHistory"
-        resolver { input: PaymentHistoryDataInput ->
+        resolver { date: String?, cost: Float?, branchId: Int, apartmentId: Int, serviceId: Int? ->
             try {
-                PaymentHistoryMutation().createPaymentHistory(input)
+                PaymentHistoryMutation().createPaymentHistory(date, cost, branchId, apartmentId, serviceId)
                 true
             } catch (e: Exception) {
                 false
@@ -458,9 +468,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updatePaymentHistory") {
         description = "Update PaymentHistory"
-        resolver {id: Int, input: PaymentHistoryDataInput ->
+        resolver {id: Int, date: String?, cost:Float?, branchId: Int?, apartmentId: Int? ->
             try{
-                PaymentHistoryMutation().updatePaymentHistory(id, input)
+                PaymentHistoryMutation().updatePaymentHistory(id, date, cost, branchId, apartmentId)
                 true
             } catch (e: Exception) {
                 false
@@ -502,9 +512,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateReadings") {
         description = "Update Readings"
-        resolver {id: Int, input: ReadingsDataInput ->
+        resolver {id: Int, reading: Float?, date: String?, apartmentId: Int?, counterRefId: Int? ->
             try{
-                ReadingsMutation().updateReadings(id, input)
+                ReadingsMutation().updateReadings(id, reading, date, apartmentId, counterRefId)
                 true
             } catch (e: Exception) {
                 false
@@ -550,9 +560,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateService") {
         description = "Update Service"
-        resolver {id: Int, input: ServiceDataInput ->
+        resolver {id: Int, name: String?, customWork: Boolean?, description: String?, positionId: Int?, measureRefId: Int? ->
             try{
-                ServiceMutation().updateService(id, input)
+                ServiceMutation().updateService(id, name, customWork, description, positionId, measureRefId)
                 true
             } catch (e: Exception) {
                 false
@@ -606,9 +616,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateServiceCollection") {
         description = "Update ServiceCollection"
-        resolver {id: Int, input: ServiceCollectionDataInput ->
+        resolver {id: Int, branchId: Int?, serviceId: Int?, cost: Float? ->
             try{
-                ServiceCollectionMutation().updateServiceCollection(id, input)
+                ServiceCollectionMutation().updateServiceCollection(id, branchId, serviceId, cost)
                 true
             } catch (e: Exception) {
                 false
@@ -655,9 +665,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateServiceRecord") {
         description = "Update ServiceRecord"
-        resolver {id: Int, input: ServiceRecordDataInput ->
+        resolver {id: Int, registrationDate: String?, status: String?, userId: Int?, serviceId: Int?, employeeId: Int? ->
             try{
-                ServiceRecordMutation().updateServiceRecord(id, input)
+                ServiceRecordMutation().updateServiceRecord(id, registrationDate, status, userId, serviceId, employeeId)
                 true
             } catch (e: Exception) {
                 false
@@ -699,9 +709,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateCategory") {
         description = "Update Category"
-        resolver {id: Int, input: CategoryDataInput ->
+        resolver {id: Int, name: String? ->
             try{
-                CategoryMutation().updateCategory(id, input)
+                CategoryMutation().updateCategory(id, name)
                 true
             } catch (e: Exception) {
                 false

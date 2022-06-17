@@ -17,10 +17,10 @@ class TypeMutation {
         }
     }
 
-    fun updateType(id: Int, data: TypeDataInput) {
+    fun updateType(id: Int, name: String?) {
         transaction {
             Type.update({Type.id eq id}) {
-                it[name] = data.name
+               if (name != null) it[Type.name] = name
             }
         }
     }
