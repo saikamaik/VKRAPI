@@ -12,8 +12,8 @@ class BranchMutation {
         transaction {
             Branch.insert {
                 it[name] = data.name!!
-                it[country] = data.country!!
-                it[city] = data.city!!
+                if (data.country!= null) it[country] = data.country
+                if (data.city!= null) it[city] = data.city
                 it[address] = data.address!!
                 it[phoneNumber] = data.phoneNumber!!
                 it[orgId] = data.orgId!!

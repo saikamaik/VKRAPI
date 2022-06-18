@@ -1,13 +1,47 @@
 package com.diploma.graphQLShema
 
+import com.apurebase.kgraphql.GraphQL
 import com.apurebase.kgraphql.schema.dsl.SchemaBuilder
 import com.diploma.databaseMutationController.*
 import com.diploma.model.*
+import io.ktor.http.cio.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.Exception
 
 fun SchemaBuilder.schemaValue() {
+
+    mutation("registerUser"){
+        description = "Register a new user "
+        resolver { userInput: UserDataInput ->
+            val access = UserMutation().registerUser(userInput)
+            UserMutation().convertFromInput(access)
+        }
+    }
+
+    mutation("authUser"){
+        description = "Authenticate user"
+        resolver { email: String, password: String ->
+            try{
+                UserMutation().authUser(email, password)
+                true
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+    }
+
+    mutation("refreshToken"){
+        description = "Refresh user token"
+        resolver { userInput: UserDataInput ->
+            try{
+                UserMutation().refreshUserToken(userInput)
+                true
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+    }
 
     mutation("createUser") {
         description = "Create a new user"
@@ -16,7 +50,7 @@ fun SchemaBuilder.schemaValue() {
                 UserMutation().createUser(userInput)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -24,12 +58,13 @@ fun SchemaBuilder.schemaValue() {
     mutation("updateUser") {
         description = "Update user"
         resolver { id: Int, name: String?, birthDate: String?, email: String?, phoneNumber: String? ->
-            try{
-                UserMutation().updateUser(id, name, birthDate, phoneNumber, email)
+                try {
+            UserMutation().updateUser(id, name, birthDate, phoneNumber, email)
             true
         } catch (e: Exception) {
-        false
-    } }
+        throw e
+        }
+        }
     }
 
     mutation("deleteUser") {
@@ -39,7 +74,7 @@ fun SchemaBuilder.schemaValue() {
                 UserMutation().deleteUser(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -60,7 +95,19 @@ fun SchemaBuilder.schemaValue() {
                 UserMutation().addApartmentToUser(userInput)
                 true
             } catch (e: Exception) {
-                false
+                throw e
+            }
+        }
+    }
+
+    mutation("updateUserApartment"){
+        description = "Update a new user-apartment relationship"
+        resolver { id:Int, userId: Int?, apartmentId: Int? ->
+            try {
+                UserMutation().updateApartmentToUser(id, userId, apartmentId)
+                true
+            } catch (e: Exception) {
+                throw e
             }
         }
     }
@@ -72,7 +119,7 @@ fun SchemaBuilder.schemaValue() {
                 UserMutation().deleteApartmentToUser(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -93,7 +140,7 @@ fun SchemaBuilder.schemaValue() {
                 OrganizationMutation().createOrg(orgInput)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -105,8 +152,9 @@ fun SchemaBuilder.schemaValue() {
                 OrganizationMutation().updateOrg(id, name)
                 true
             } catch (e: Exception) {
-                false
-            } }
+                throw e
+            }
+        }
     }
 
     mutation("deleteOrg") {
@@ -116,7 +164,7 @@ fun SchemaBuilder.schemaValue() {
                 OrganizationMutation().deleteOrg(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -139,7 +187,7 @@ fun SchemaBuilder.schemaValue() {
                 TypeMutation().createType(typeInput)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -151,7 +199,7 @@ fun SchemaBuilder.schemaValue() {
                 TypeMutation().updateType(id, name)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -162,7 +210,7 @@ fun SchemaBuilder.schemaValue() {
                 TypeMutation().deleteType(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -181,12 +229,12 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("createPosition") {
         description = "Create a new Position"
-        resolver { input: PositionData ->
+        resolver { input: PositionDataInput ->
             try {
                 PositionMutation().createPosition(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -198,7 +246,7 @@ fun SchemaBuilder.schemaValue() {
                 PositionMutation().updatePosition(id, name)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -209,7 +257,7 @@ fun SchemaBuilder.schemaValue() {
                 PositionMutation().deletePosition(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -233,7 +281,7 @@ fun SchemaBuilder.schemaValue() {
                 MeasureReferenceMutation().createMeasureReference(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -245,7 +293,7 @@ fun SchemaBuilder.schemaValue() {
                 MeasureReferenceMutation().updateMeasureReference(id, fullName, shortName)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -256,7 +304,7 @@ fun SchemaBuilder.schemaValue() {
                 MeasureReferenceMutation().deleteMeasureReference(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -280,7 +328,7 @@ fun SchemaBuilder.schemaValue() {
                 ApartmentMutation().createApartment(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -292,7 +340,7 @@ fun SchemaBuilder.schemaValue() {
                 ApartmentMutation().updateApartment(id, fullSize, liveSize, category, branchId, personalAccount)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -303,7 +351,7 @@ fun SchemaBuilder.schemaValue() {
                 ApartmentMutation().deleteApartment(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -324,7 +372,7 @@ fun SchemaBuilder.schemaValue() {
                 BranchMutation().createBranch(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -336,7 +384,7 @@ fun SchemaBuilder.schemaValue() {
                 BranchMutation().updateBranch(id, name, country, city, address, phoneNumber, orgId)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -347,7 +395,7 @@ fun SchemaBuilder.schemaValue() {
                 BranchMutation().deleteBranch(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -368,7 +416,7 @@ fun SchemaBuilder.schemaValue() {
                 CounterReferenceMutation().createCounterReference(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -380,7 +428,7 @@ fun SchemaBuilder.schemaValue() {
                 CounterReferenceMutation().updateCounterReference(id, number, model, label, serviceDate, typeId)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -391,7 +439,7 @@ fun SchemaBuilder.schemaValue() {
                 CounterReferenceMutation().deleteCounterReference(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -412,7 +460,7 @@ fun SchemaBuilder.schemaValue() {
                 EmployeeMutation().createEmployee(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -424,7 +472,7 @@ fun SchemaBuilder.schemaValue() {
                 EmployeeMutation().updateEmployee(id, name, phoneNumber, description, branchId, positionId)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -435,7 +483,7 @@ fun SchemaBuilder.schemaValue() {
                 EmployeeMutation().deleteEmployee(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -461,7 +509,7 @@ fun SchemaBuilder.schemaValue() {
                 PaymentHistoryMutation().createPaymentHistory(date, cost, branchId, apartmentId, serviceId)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -473,7 +521,7 @@ fun SchemaBuilder.schemaValue() {
                 PaymentHistoryMutation().updatePaymentHistory(id, date, cost, branchId, apartmentId)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -484,7 +532,7 @@ fun SchemaBuilder.schemaValue() {
                 PaymentHistoryMutation().deletePaymentHistory(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -505,7 +553,7 @@ fun SchemaBuilder.schemaValue() {
                 ReadingsMutation().createReadings(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -517,7 +565,7 @@ fun SchemaBuilder.schemaValue() {
                 ReadingsMutation().updateReadings(id, reading, date, apartmentId, counterRefId)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -528,7 +576,7 @@ fun SchemaBuilder.schemaValue() {
                 ReadingsMutation().deleteReadings(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -553,7 +601,7 @@ fun SchemaBuilder.schemaValue() {
                 ServiceMutation().createService(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -565,7 +613,7 @@ fun SchemaBuilder.schemaValue() {
                 ServiceMutation().updateService(id, name, customWork, description, positionId, measureRefId)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -576,7 +624,7 @@ fun SchemaBuilder.schemaValue() {
                 ServiceMutation().deleteService(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -609,7 +657,7 @@ fun SchemaBuilder.schemaValue() {
                 ServiceCollectionMutation().createServiceCollection(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -621,7 +669,7 @@ fun SchemaBuilder.schemaValue() {
                 ServiceCollectionMutation().updateServiceCollection(id, branchId, serviceId, cost)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -632,7 +680,7 @@ fun SchemaBuilder.schemaValue() {
                 ServiceCollectionMutation().deleteServiceCollection(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -658,7 +706,7 @@ fun SchemaBuilder.schemaValue() {
                 ServiceRecordMutation().createServiceRecord(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -670,7 +718,7 @@ fun SchemaBuilder.schemaValue() {
                 ServiceRecordMutation().updateServiceRecord(id, registrationDate, status, userId, serviceId, employeeId)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             } }
     }
 
@@ -681,7 +729,7 @@ fun SchemaBuilder.schemaValue() {
                 ServiceRecordMutation().deleteServiceRecord(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -702,7 +750,7 @@ fun SchemaBuilder.schemaValue() {
                 CategoryMutation().createCategory(input)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -714,8 +762,9 @@ fun SchemaBuilder.schemaValue() {
                 CategoryMutation().updateCategory(id, name)
                 true
             } catch (e: Exception) {
-                false
-            } }
+                throw e
+            }
+        }
     }
 
     mutation("deleteCategory") {
@@ -725,7 +774,7 @@ fun SchemaBuilder.schemaValue() {
                 CategoryMutation().deleteCategory(id)
                 true
             } catch (e: Exception) {
-                false
+                throw e
             }
         }
     }
@@ -853,7 +902,6 @@ fun SchemaBuilder.schemaValue() {
     inputType<CategoryDataInput>{
         description = "The input of the Categories without the identifier"
     }
-
 
 }
 

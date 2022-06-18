@@ -15,12 +15,12 @@ class ApplicationTest {
     @Test
     fun t01UserUpdateTest() {
         withTestApplication({ module(testing = true)}) {
-            handleRequest(HttpMethod.Post, "/") {
+            handleRequest(HttpMethod.Post, "/graphql") {
                 addHeader("Content-Type", "application/json")
                 val graphQLRequest = GraphQLRequest(
                     """
                     {query: 'mutation {
-                      updateUser(id: 9, name: "update") {
+                      updateType(id: Int, name: String) {
                         id
                         name
                       }
@@ -32,7 +32,7 @@ class ApplicationTest {
                 assertEquals(
                     """
                     {
-                          "id": 9,
+                          "id": 5,
                           "name": "update"
                       }
                 """.trimIndent(), response.content

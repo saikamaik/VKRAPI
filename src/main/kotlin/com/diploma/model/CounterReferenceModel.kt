@@ -2,6 +2,7 @@ package com.diploma.model
 
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.jodatime.datetime
 
 data class CounterReferenceData(
     var id: Int,
@@ -25,7 +26,7 @@ object Counter_Reference: Table() {
     val number = varchar("number", 255)
     val model = varchar("model", 255)
     val label = varchar("label", 255)
-    val serviceDate = varchar("service_date", 255)
+    val serviceDate = datetime("service_date")
     val typeId = integer("type_id") references Type.id
 
     override val primaryKey = PrimaryKey(id, name = "counter_reference_pk")
@@ -36,7 +37,7 @@ object Counter_Reference: Table() {
             number = row[number],
             model = row[model],
             label = row[label],
-            serviceDate = row[serviceDate],
+            serviceDate = row[serviceDate].toString("dd-MM-yyyy"),
             typeId = row[typeId]
         )
 }

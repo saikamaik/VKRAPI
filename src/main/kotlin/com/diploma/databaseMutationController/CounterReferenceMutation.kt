@@ -5,6 +5,7 @@ import com.diploma.model.Counter_Reference
 import com.diploma.model.CounterReferenceDataInput
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 
 class CounterReferenceMutation {
 
@@ -14,7 +15,7 @@ class CounterReferenceMutation {
                 it[number] = data.number!!
                 it[model] = data.model!!
                 it[label] = data.label!!
-                it[serviceDate] = data.serviceDate!!
+                it[serviceDate] = DateTime(data.serviceDate!!)
                 it[typeId] = data.typeId!!
             }[Counter_Reference.id]
         }
@@ -26,7 +27,7 @@ class CounterReferenceMutation {
                 if(number != null) it[Counter_Reference.number] = number
                 if(model != null) it[Counter_Reference.model] = model
                 if(label != null) it[Counter_Reference.label] = label
-                if(serviceDate != null) it[Counter_Reference.serviceDate] = serviceDate
+                if(serviceDate != null) it[Counter_Reference.serviceDate] = DateTime(serviceDate)
                 if(typeId != null) it[Counter_Reference.typeId] = typeId
             }
         }
@@ -53,7 +54,7 @@ class CounterReferenceMutation {
                 Counter_Reference.select { Counter_Reference.label eq label }.map { Counter_Reference.toMap(it) }
             }
             serviceDate != null -> {
-                Counter_Reference.select { Counter_Reference.serviceDate eq serviceDate }.map { Counter_Reference.toMap(it) }
+                Counter_Reference.select { Counter_Reference.serviceDate eq DateTime(serviceDate) }.map { Counter_Reference.toMap(it) }
             }
             typeId != null -> {
                 Counter_Reference.select { Counter_Reference.typeId eq typeId }.map { Counter_Reference.toMap(it) }

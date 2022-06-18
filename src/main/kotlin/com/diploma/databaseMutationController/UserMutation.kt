@@ -2,6 +2,8 @@ package com.diploma.databaseMutationController
 
 import com.diploma.model.*
 import com.diploma.utils.JwtConfig
+import com.diploma.utils.checkEmail
+import com.diploma.utils.formatDate
 import graphql.GraphQLException
 import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -14,24 +16,15 @@ class UserMutation {
 
     private val jwtSecret = System.getenv("JWT_SECRET")
 
-    fun userRegistration(data: UserDataInput): UserDataInput { //Регистрация юзера
-        data.id = null
+    fun registerUser(data: UserDataInput): UserDataInput { //Регистрация юзера
         try {
-            data.id = transaction {
-                User.insert {
-                    it[email] = data.email!!
-                    it[password] = DigestUtils.md5Hex(data.email + jwtSecret + data.password)
-                    it[name] = data.name!!
-                    it[phoneNumber] = data.phoneNumber!!
-                    it[birthDate] = DateTime(data.birthDate)
-                }[User.id]
-            }
-            data.refreshToken = JwtConfig.generateRefreshToken(data.email!!, data.id!!)
+            val dataCreated = createUser(data)
+            dataCreated.refreshToken = JwtConfig.generateRefreshToken(dataCreated.email!!, dataCreated.id!!)
             transaction {
-                User.update({ User.id eq data.id!! }) { it[refreshToken] = data.refreshToken!! }
+                User.update({ User.id eq dataCreated.id!! }) { it[refreshToken] = dataCreated.refreshToken!! }
             }
-            data.accessToken = JwtConfig.generateAccessToken(data.email!!, data.id!!)
-            return data
+            dataCreated.accessToken = JwtConfig.generateAccessToken(dataCreated.email, dataCreated.id!!)
+            return dataCreated
         } catch (ex: ExposedSQLException) {
             if (ex.toString().contains("User_email_key")) {
                 throw GraphQLException("A User with the same email already exists")
@@ -44,8 +37,6 @@ class UserMutation {
             } else if (ex.toString().contains("User_phone_num_key")) {
                 throw GraphQLException("A User with the same phone number already exists")
             }
-        } catch (ex: java.lang.NullPointerException) {
-            throw GraphQLException("All data must be defined if service provider registering now")
         }
         return data
     }
@@ -53,25 +44,18 @@ class UserMutation {
     fun authUser(email: String, password: String): String? {//Авторизация юзера
         val map: List<UserData> = transaction {
             User.select {
-                (User.email eq email) and (User.password eq DigestUtils.md5Hex(email + jwtSecret + password))
+                (User.email eq email) and (User.password eq DigestUtils.sha1Hex(email + jwtSecret + password))
             }.map { User.toMap(it) }
         }
-        val user: UserData?
-        user = transaction {
-            User.select { (User.email eq email) }.limit(1).single().let{ User.toShowMap(it)}
-        }
-        user.accessToken = null
         return if (map.isNotEmpty()) {
-            user.refreshToken = JwtConfig.generateRefreshToken(user.email!!, user.id!!)
-            user.accessToken = JwtConfig.generateAccessToken(user.email!!, user.id!!)
-            user.id = user.id
+            map[0].refreshToken = JwtConfig.generateRefreshToken(map[0].email!!, map[0].id!!)
+            map[0].accessToken = JwtConfig.generateAccessToken(map[0].email!!, map[0].id!!)
             transaction {
-                User.update({ User.email eq user.email!! }) {
-                    it[refreshToken] = user.refreshToken!!
-                    it[accessToken] = user.accessToken
+                User.update({ User.id eq map[0].id!! }) {
+                    it[refreshToken] = map[0].refreshToken!!
                 }
             }
-            user.accessToken
+            map[0].accessToken
         } else
             return null
     }
@@ -98,6 +82,7 @@ class UserMutation {
 
     fun deleteUser(data: Int) {
         transaction {
+            deleteWhenDeletingUser(data)
             User.deleteWhere { User.id eq data }
         }
     }
@@ -130,22 +115,35 @@ class UserMutation {
         }
     }
 
-    fun createUser(data: UserDataInput): UserDataInput{
+    fun createUser(data: UserDataInput): UserDataInput {
+
+        validInput(data)
+
         data.id = transaction {
             User.insert {
                 it[email] = data.email!!
-                it[password] = DigestUtils.md5Hex(data.email + jwtSecret + data.password)
+                it[password] = DigestUtils.sha1Hex(data.email + jwtSecret + data.password)
                 it[name] = data.name!!
                 it[phoneNumber] = data.phoneNumber!!
-                it[birthDate] = DateTime(data.birthDate)
+                if (data.birthDate != null) it[birthDate] = DateTime(data.birthDate)
+                    else it[birthDate] = DateTime("1970-01-01")
                 it[address] = data.address!!
                 it[orgId] = data.orgId!!
             }[User.id]
         }
+
         return data
     }
 
-    fun updateUser(id: Int, name: String?, birthDate: String?, phoneNumber: String?, email: String?){
+    fun convertFromInput(data: UserDataInput): UserData {
+        return UserData(
+            id = data.id, email = data.email, name = data.name, password = data.password,
+            phoneNumber = data.phoneNumber, birthDate = data.birthDate,
+            address = data.address, orgId = data.orgId, accessToken = data.accessToken
+        )
+    }
+
+    fun updateUser(id: Int, name: String?, birthDate: String?, phoneNumber: String?, email: String?): UserData{
         transaction {
             User.update({ User.id eq id }) {
                 if(name != null) it[User.name] = name
@@ -154,6 +152,7 @@ class UserMutation {
                 if(email != null) it[User.email] = email
             }
         }
+        return User.select { User.id eq id }.map { User.toShowMap(it) }.single()
     }
 
     fun addApartmentToUser(data: UserApartmentDataInput) {
@@ -180,6 +179,12 @@ class UserMutation {
         }
     }
 
+    private fun deleteWhenDeletingUser(id:Int) {
+        transaction {
+            User_Apartment.deleteWhere { User_Apartment.userId eq id }
+        }
+    }
+
     fun showUserApartment(id: Int?, userId: Int?, apartmentId: Int?): List<UserApartmentData> {
         return when {
             id != null -> {
@@ -192,6 +197,33 @@ class UserMutation {
                 User_Apartment.select { User_Apartment.apartmentId eq apartmentId }.map { User_Apartment.toMap(it) }
             }
             else -> User_Apartment.selectAll().map { User_Apartment.toMap(it) }
+        }
+    }
+
+    private fun validInput(data: UserDataInput) {
+        if(!checkEmail(data.email!!))
+            throw Error("Email с неправильным форматом")
+
+        if(data.name?.length!! < 10)
+            throw Error("ФИО должно быть больше 10 символов")
+
+        if(data.password?.length!! < 8 )
+            throw Error("password should be minimum 8 characters")
+
+        if(data.address.isNullOrEmpty())
+            throw Error("Адрес - обязательное поле")
+
+        if (data.orgId == null)
+            throw Error("ID организации - обязательное поле")
+
+        if (data.phoneNumber == null)
+            throw Error("Номер телефона - обязательное поле")
+
+        if (data.birthDate!= null) {
+            if (formatDate(data.birthDate) == null)
+            {
+                throw Error("Неправильный формат даты")
+            }
         }
     }
 }

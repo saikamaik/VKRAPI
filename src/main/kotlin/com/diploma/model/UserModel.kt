@@ -25,12 +25,12 @@ data class UserData(
 
 data class UserDataInput(
     var id: Int? = null,
-    val name: String? = "",
-    val email: String? = "",
-    val password: String? = "",
-    val phoneNumber: String? = "",
-    val birthDate: String? = "",
-    val address: String? = "",
+    val name: String?,
+    val email: String?,
+    val password: String?,
+    val phoneNumber: String?,
+    val birthDate: String?,
+    val address: String?,
     var orgId: Int? = 1,
     var refreshToken: String? = "",
     var accessToken: String? = ""

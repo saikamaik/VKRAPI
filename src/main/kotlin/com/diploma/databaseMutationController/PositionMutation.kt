@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class PositionMutation {
 
-    fun createPosition(data: PositionData) {
+    fun createPosition(data: PositionDataInput) {
         transaction {
             Position.insert {
                 it[name] = data.name
