@@ -143,7 +143,25 @@ class UserMutation {
         )
     }
 
-    fun updateUser(id: Int, name: String?, birthDate: String?, phoneNumber: String?, email: String?): UserData{
+    fun updateUser(id: Int, name: String?, birthDate: String?, phoneNumber: String?, email: String?){
+
+        if (email != null ) {
+            if (!checkEmail(email))
+                throw Error("Email с неправильным форматом")
+        }
+
+        if (name != null) {
+            if (name.length < 10)
+                throw Error("ФИО должно быть больше 10 символов")
+        }
+
+        if (birthDate!= null) {
+            if (formatDate(birthDate) == null)
+            {
+                throw Error("Неправильный формат даты")
+            }
+        }
+
         transaction {
             User.update({ User.id eq id }) {
                 if(name != null) it[User.name] = name
@@ -152,7 +170,6 @@ class UserMutation {
                 if(email != null) it[User.email] = email
             }
         }
-        return User.select { User.id eq id }.map { User.toShowMap(it) }.single()
     }
 
     fun addApartmentToUser(data: UserApartmentDataInput) {

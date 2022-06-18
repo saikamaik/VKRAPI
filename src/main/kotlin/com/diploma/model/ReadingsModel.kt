@@ -32,7 +32,7 @@ object Readings: Table() {
         ReadingsData(
             id = row[id],
             reading = row[reading],
-            date = row[date].toString("dd-MM-yyyy"),
+            date = row[date].toString("yyyy-MM-dd"),
             apartmentId = row[apartmentId],
             counterRefId = row[counterRefId]
         )

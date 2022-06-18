@@ -31,7 +31,7 @@ object PaymentHistory: Table() {
     fun toMap(row: ResultRow): PaymentHistoryData =
         PaymentHistoryData(
             id = row[id],
-            date = row[date].toString("dd-MM-yyyy"),
+            date = row[date].toString("yyyy-MM-dd"),
             cost = row[cost],
             branchId = row[branchId],
             apartmentId = row[apartmentId]

@@ -57,7 +57,7 @@ object User: Table() {
             email = row[email],
             password = row[password],
             phoneNumber = row[phoneNumber],
-            birthDate = row[birthDate]!!.toString("dd-MM-yyyy"),
+            birthDate = row[birthDate]!!.toString("yyyy-MM-dd"),
             address = row[address],
             orgId = row[orgId],
             accessToken = JwtConfig.generateAccessToken(row[email], row[id]),
@@ -71,7 +71,7 @@ object User: Table() {
             email = row[email],
             password = row[password],
             phoneNumber = row[phoneNumber],
-            birthDate = row[birthDate]!!.toString("dd-MM-yyyy"),
+            birthDate = row[birthDate]!!.toString("yyyy-MM-dd"),
             address = row[address],
         )
 }

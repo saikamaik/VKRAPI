@@ -63,7 +63,7 @@ fun SchemaBuilder.schemaValue() {
             true
         } catch (e: Exception) {
         throw e
-        }
+            }
         }
     }
 

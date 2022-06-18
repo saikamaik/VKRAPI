@@ -34,7 +34,7 @@ object Service_Record: Table() {
     fun toMap(row: ResultRow): ServiceRecordData =
         ServiceRecordData (
             id = row[id],
-            registrationDate = row[registrationDate].toString("dd-MM-yyyy"),
+            registrationDate = row[registrationDate].toString("yyyy-MM-dd"),
             status = row[status],
             userId = row[userId],
             serviceId = row[serviceId],

@@ -37,7 +37,7 @@ object Counter_Reference: Table() {
             number = row[number],
             model = row[model],
             label = row[label],
-            serviceDate = row[serviceDate].toString("dd-MM-yyyy"),
+            serviceDate = row[serviceDate].toString("yyyy-MM-dd"),
             typeId = row[typeId]
         )
 }
