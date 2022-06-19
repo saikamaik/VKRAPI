@@ -21,7 +21,7 @@ class ServiceMutation {
         }
     }
 
-    fun updateService(id: Int, name: String?, customWork: Boolean?, description: String?, positionId: Int?, measureRefId: Int?) {
+    fun updateService(id: Int, name: String?, customWork: Boolean?, description: String?, positionId: Int?, measureRefId: Int?, categoryId: Int?) {
         transaction {
             Service.update ({Service.id eq id}) {
                 if(name != null) it[Service.name] = name
@@ -29,6 +29,7 @@ class ServiceMutation {
                 if(description != null) it[Service.description] = description
                 if(positionId != null) it[Service.positionId] = positionId
                 if(measureRefId != null) it[Service.measureRefId] = measureRefId
+                if(categoryId != null) it[Service.categoryId] = categoryId
             }
         }
     }

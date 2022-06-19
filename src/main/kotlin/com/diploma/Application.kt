@@ -8,6 +8,7 @@ import com.diploma.model.GraphQLRequest
 import com.diploma.model.User
 import com.diploma.utils.JwtConfig
 import com.diploma.utils.TokenKey
+import graphql.VisibleForTesting
 import io.ktor.server.netty.*
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -26,12 +27,12 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 val jwtConfig = JwtConfig
 
 @Suppress("unused") // Referenced in application.conf
-@kotlin.jvm.JvmOverloads
-fun Application.module(testing: Boolean = false) {
+fun Application.module() {
 
     DatabaseFactory.hikari()
 
     install(GraphQL) {
+        playground = true
         schema { schemaValue() }
     }
 
@@ -60,24 +61,24 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
 
-        header("Authorization", "Bearer") {
-            post("/graphql") {
-                val graphQLRequest = call.receive<GraphQLRequest>()
-                if (("auth" in graphQLRequest.query) or ("reg" in graphQLRequest.query)) {
-                    KGraphQL.schema { schemaValue() }.execute(graphQLRequest.query)
-                } else {
-                    call.respond(HttpStatusCode(401, "not authorized"))
-                }
-            }
-        }
-        authenticate("auth-jwt") {
+//        header("Authorization", "Bearer") {
+//            post("/graphql") {
+//                val graphQLRequest = call.receive<GraphQLRequest>()
+//                if (("auth" in graphQLRequest.query) or ("reg" in graphQLRequest.query)) {
+//                    KGraphQL.schema { schemaValue() }.execute(graphQLRequest.query)
+//                } else {
+//                    call.respond(HttpStatusCode(401, "not authorized"))
+//                }
+//            }
+//        }
+//        authenticate("auth-jwt") {
             route("/graphql") {
                 post() {
                     val graphqlRequest = call.receive<GraphQLRequest>()
                     KGraphQL.schema { schemaValue() }.execute(graphqlRequest.query)
                 }
             }
-        }
+//        }
     }
 }
 

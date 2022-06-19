@@ -20,7 +20,7 @@ object JwtConfig{
     private const val issuer = "http://127.0.0.1:4000/"
     private const val validityInMs = 36_000_00 * 24 // 1 day
 
-    private val jwtSecret = System.getenv("JWT_SECRET")
+    private val jwtSecret = "ZKHPOKS"
     private val algorithm = Algorithm.HMAC256(jwtSecret)
     private const val jwtRealm = "com.diploma"
 

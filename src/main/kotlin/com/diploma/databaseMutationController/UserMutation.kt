@@ -16,77 +16,6 @@ class UserMutation {
 
     private val jwtSecret = System.getenv("JWT_SECRET")
 
-    fun registerUser(data: UserDataInput): UserDataInput { //Регистрация юзера
-        try {
-            val dataCreated = createUser(data)
-            dataCreated.refreshToken = JwtConfig.generateRefreshToken(dataCreated.email!!, dataCreated.id!!)
-            transaction {
-                User.update({ User.id eq dataCreated.id!! }) { it[refreshToken] = dataCreated.refreshToken!! }
-            }
-            dataCreated.accessToken = JwtConfig.generateAccessToken(dataCreated.email, dataCreated.id!!)
-            return dataCreated
-        } catch (ex: ExposedSQLException) {
-            if (ex.toString().contains("User_email_key")) {
-                throw GraphQLException("A User with the same email already exists")
-            } else if (ex.toString().contains("User_phone_num_key")) {
-                throw GraphQLException("A User with the same phone number already exists")
-            }
-        } catch (ex: PSQLException) {
-            if (ex.toString().contains("User_email_key")) {
-                throw GraphQLException("A User with the same email already exists")
-            } else if (ex.toString().contains("User_phone_num_key")) {
-                throw GraphQLException("A User with the same phone number already exists")
-            }
-        }
-        return data
-    }
-
-    fun authUser(email: String, password: String): String? {//Авторизация юзера
-        val map: List<UserData> = transaction {
-            User.select {
-                (User.email eq email) and (User.password eq DigestUtils.sha1Hex(email + jwtSecret + password))
-            }.map { User.toMap(it) }
-        }
-        return if (map.isNotEmpty()) {
-            map[0].refreshToken = JwtConfig.generateRefreshToken(map[0].email!!, map[0].id!!)
-            map[0].accessToken = JwtConfig.generateAccessToken(map[0].email!!, map[0].id!!)
-            transaction {
-                User.update({ User.id eq map[0].id!! }) {
-                    it[refreshToken] = map[0].refreshToken!!
-                }
-            }
-            map[0].accessToken
-        } else
-            return null
-    }
-
-    fun refreshUserToken(data : UserDataInput) : UserDataInput{//обновление токена пользователя
-        val values = JwtConfig.tokenDecode(data.refreshToken!!)
-        val map : List<UserData> = transaction {
-            User.select {User.refreshToken eq data.refreshToken!!}.map { User.toMap(it) }
-        }
-        if (map.isNotEmpty()){
-            transaction {
-                User.update({ User.refreshToken eq data.refreshToken!! }){
-                    data.refreshToken = JwtConfig.generateRefreshToken(values[1], values[0].toIntOrNull()!!)
-                    it[refreshToken] = data.refreshToken!!
-                }
-                data.accessToken = JwtConfig.generateAccessToken(values[1], values[0].toInt())
-            }
-        }
-        else{
-            throw GraphQLException("Invalid token was given")
-        }
-        return data
-    }
-
-    fun deleteUser(data: Int) {
-        transaction {
-            deleteWhenDeletingUser(data)
-            User.deleteWhere { User.id eq data }
-        }
-    }
-
     fun showUser(id: Int?, name: String?, email: String?, phoneNumber: String?, birthDate: String?, address: String?, orgId: Int?): List<UserData>{
         val date = DateTime(birthDate)
         return when {
@@ -143,7 +72,7 @@ class UserMutation {
         )
     }
 
-    fun updateUser(id: Int, name: String?, birthDate: String?, phoneNumber: String?, email: String?){
+    fun updateUser(id: Int, name: String?, birthDate: String?, phoneNumber: String?, email: String?, orgId: Int?, address: String?){
 
         if (email != null ) {
             if (!checkEmail(email))
@@ -168,6 +97,8 @@ class UserMutation {
                 if(birthDate != null) it[User.birthDate] = DateTime(birthDate)
                 if(phoneNumber != null) it[User.phoneNumber] = phoneNumber
                 if(email != null) it[User.email] = email
+                if(orgId != null) it[User.orgId] = orgId
+                if (address!=null) it[User.address] = address
             }
         }
     }
@@ -242,6 +173,79 @@ class UserMutation {
                 throw Error("Неправильный формат даты")
             }
         }
+    }
+
+    fun deleteUser(data: Int) {
+        transaction {
+            deleteWhenDeletingUser(data)
+            User.deleteWhere { User.id eq data }
+        }
+
+
+//    fun registerUser(data: UserDataInput): UserDataInput { //Регистрация юзера
+//        try {
+//            val dataCreated = createUser(data)
+//            dataCreated.refreshToken = JwtConfig.generateRefreshToken(dataCreated.email!!, dataCreated.id!!)
+//            transaction {
+//                User.update({ User.id eq dataCreated.id!! }) { it[refreshToken] = dataCreated.refreshToken!! }
+//            }
+//            dataCreated.accessToken = JwtConfig.generateAccessToken(dataCreated.email, dataCreated.id!!)
+//            return dataCreated
+//        } catch (ex: ExposedSQLException) {
+//            if (ex.toString().contains("User_email_key")) {
+//                throw GraphQLException("A User with the same email already exists")
+//            } else if (ex.toString().contains("User_phone_num_key")) {
+//                throw GraphQLException("A User with the same phone number already exists")
+//            }
+//        } catch (ex: PSQLException) {
+//            if (ex.toString().contains("User_email_key")) {
+//                throw GraphQLException("A User with the same email already exists")
+//            } else if (ex.toString().contains("User_phone_num_key")) {
+//                throw GraphQLException("A User with the same phone number already exists")
+//            }
+//        }
+//        return data
+//    }
+//
+//    fun authUser(email: String, password: String): String? {//Авторизация юзера
+//        val map: List<UserData> = transaction {
+//            User.select {
+//                (User.email eq email) and (User.password eq DigestUtils.sha1Hex(email + jwtSecret + password))
+//            }.map { User.toMap(it) }
+//        }
+//        return if (map.isNotEmpty()) {
+//            map[0].refreshToken = JwtConfig.generateRefreshToken(map[0].email!!, map[0].id!!)
+//            map[0].accessToken = JwtConfig.generateAccessToken(map[0].email!!, map[0].id!!)
+//            transaction {
+//                User.update({ User.id eq map[0].id!! }) {
+//                    it[refreshToken] = map[0].refreshToken!!
+//                }
+//            }
+//            map[0].accessToken
+//        } else
+//            return null
+//    }
+//
+//    fun refreshUserToken(data : UserDataInput) : UserDataInput{//обновление токена пользователя
+//        val values = JwtConfig.tokenDecode(data.refreshToken!!)
+//        val map : List<UserData> = transaction {
+//            User.select {User.refreshToken eq data.refreshToken!!}.map { User.toMap(it) }
+//        }
+//        if (map.isNotEmpty()){
+//            transaction {
+//                User.update({ User.refreshToken eq data.refreshToken!! }){
+//                    data.refreshToken = JwtConfig.generateRefreshToken(values[1], values[0].toIntOrNull()!!)
+//                    it[refreshToken] = data.refreshToken!!
+//                }
+//                data.accessToken = JwtConfig.generateAccessToken(values[1], values[0].toInt())
+//            }
+//        }
+//        else{
+//            throw GraphQLException("Invalid token was given")
+//        }
+//        return data
+//    }
+
     }
 }
 

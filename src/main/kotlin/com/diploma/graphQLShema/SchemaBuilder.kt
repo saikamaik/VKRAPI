@@ -11,38 +11,6 @@ import kotlin.Exception
 
 fun SchemaBuilder.schemaValue() {
 
-    mutation("registerUser"){
-        description = "Register a new user "
-        resolver { userInput: UserDataInput ->
-            val access = UserMutation().registerUser(userInput)
-            UserMutation().convertFromInput(access)
-        }
-    }
-
-    mutation("authUser"){
-        description = "Authenticate user"
-        resolver { email: String, password: String ->
-            try{
-                UserMutation().authUser(email, password)
-                true
-            } catch (e: Exception) {
-                throw e
-            }
-        }
-    }
-
-    mutation("refreshToken"){
-        description = "Refresh user token"
-        resolver { userInput: UserDataInput ->
-            try{
-                UserMutation().refreshUserToken(userInput)
-                true
-            } catch (e: Exception) {
-                throw e
-            }
-        }
-    }
-
     mutation("createUser") {
         description = "Create a new user"
         resolver { userInput: UserDataInput ->
@@ -57,9 +25,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateUser") {
         description = "Update user"
-        resolver { id: Int, name: String?, birthDate: String?, email: String?, phoneNumber: String? ->
+        resolver { id: Int, name: String?, birthDate: String?, email: String?, phoneNumber: String?, orgId: Int?, address: String? ->
                 try {
-            UserMutation().updateUser(id, name, birthDate, phoneNumber, email)
+            UserMutation().updateUser(id, name, birthDate, phoneNumber, email, orgId, address)
             true
         } catch (e: Exception) {
         throw e
@@ -608,9 +576,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateService") {
         description = "Update Service"
-        resolver {id: Int, name: String?, customWork: Boolean?, description: String?, positionId: Int?, measureRefId: Int? ->
+        resolver {id: Int, name: String?, customWork: Boolean?, description: String?, positionId: Int?, measureRefId: Int?, categoryId: Int? ->
             try{
-                ServiceMutation().updateService(id, name, customWork, description, positionId, measureRefId)
+                ServiceMutation().updateService(id, name, customWork, description, positionId, measureRefId, categoryId)
                 true
             } catch (e: Exception) {
                 throw e
@@ -790,6 +758,38 @@ fun SchemaBuilder.schemaValue() {
             }
         }
     }
+
+//    mutation("registerUser"){
+//        description = "Register a new user "
+//        resolver { userInput: UserDataInput ->
+//            val access = UserMutation().registerUser(userInput)
+//            UserMutation().convertFromInput(access)
+//        }
+//    }
+//
+//    mutation("authUser"){
+//        description = "Authenticate user"
+//        resolver { email: String, password: String ->
+//            try{
+//                UserMutation().authUser(email, password)
+//                true
+//            } catch (e: Exception) {
+//                throw e
+//            }
+//        }
+//    }
+//
+//    mutation("refreshToken"){
+//        description = "Refresh user token"
+//        resolver { userInput: UserDataInput ->
+//            try{
+//                UserMutation().refreshUserToken(userInput)
+//                true
+//            } catch (e: Exception) {
+//                throw e
+//            }
+//        }
+//    }
 
     type<TypeData>{
         description = "TypeData"
