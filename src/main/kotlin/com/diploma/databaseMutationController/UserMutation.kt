@@ -16,7 +16,15 @@ class UserMutation {
 
     private val jwtSecret = System.getenv("JWT_SECRET")
 
-    fun showUser(id: Int?, name: String?, email: String?, phoneNumber: String?, birthDate: String?, address: String?, orgId: Int?): List<UserData>{
+    fun showUser(
+        id: Int?,
+        name: String?,
+        email: String?,
+        phoneNumber: String?,
+        birthDate: String?,
+        address: String?,
+        orgId: Int?
+    ): List<UserData> {
         val date = DateTime(birthDate)
         return when {
             id != null -> {
@@ -55,7 +63,7 @@ class UserMutation {
                 it[name] = data.name!!
                 it[phoneNumber] = data.phoneNumber!!
                 if (data.birthDate != null) it[birthDate] = DateTime(data.birthDate)
-                    else it[birthDate] = DateTime("1970-01-01")
+                else it[birthDate] = DateTime("1970-01-01")
                 it[address] = data.address!!
                 it[orgId] = data.orgId!!
             }[User.id]
@@ -64,17 +72,16 @@ class UserMutation {
         return data
     }
 
-    fun convertFromInput(data: UserDataInput): UserData {
-        return UserData(
-            id = data.id, email = data.email, name = data.name, password = data.password,
-            phoneNumber = data.phoneNumber, birthDate = data.birthDate,
-            address = data.address, orgId = data.orgId, accessToken = data.accessToken
-        )
-    }
-
-    fun updateUser(id: Int, name: String?, birthDate: String?, phoneNumber: String?, email: String?, orgId: Int?, address: String?){
-
-        if (email != null ) {
+    fun updateUser(
+        id: Int,
+        name: String?,
+        birthDate: String?,
+        phoneNumber: String?,
+        email: String?,
+        orgId: Int?,
+        address: String?
+    ) {
+        if (email != null) {
             if (!checkEmail(email))
                 throw Error("Email с неправильным форматом")
         }
@@ -84,81 +91,34 @@ class UserMutation {
                 throw Error("ФИО должно быть больше 10 символов")
         }
 
-        if (birthDate!= null) {
-            if (formatDate(birthDate) == null)
-            {
+        if (birthDate != null) {
+            if (formatDate(birthDate) == null) {
                 throw Error("Неправильный формат даты")
             }
         }
-
         transaction {
             User.update({ User.id eq id }) {
-                if(name != null) it[User.name] = name
-                if(birthDate != null) it[User.birthDate] = DateTime(birthDate)
-                if(phoneNumber != null) it[User.phoneNumber] = phoneNumber
-                if(email != null) it[User.email] = email
-                if(orgId != null) it[User.orgId] = orgId
-                if (address!=null) it[User.address] = address
+                if (name != null) it[User.name] = name
+                if (birthDate != null) it[User.birthDate] = DateTime(birthDate)
+                if (phoneNumber != null) it[User.phoneNumber] = phoneNumber
+                if (email != null) it[User.email] = email
+                if (orgId != null) it[User.orgId] = orgId
+                if (address != null) it[User.address] = address
             }
-        }
-    }
-
-    fun addApartmentToUser(data: UserApartmentDataInput) {
-        transaction {
-            User_Apartment.insert {
-                it[userId] = data.userId!!
-                it[apartmentId] = data.apartmentId!!
-            }
-        }
-    }
-
-    fun updateApartmentToUser(id:Int, userId: Int?, apartmentId: Int?) {
-        transaction {
-            User_Apartment.update ({ User_Apartment.id eq id }) {
-                if (userId!=null) it[User_Apartment.userId] = userId
-                if (apartmentId!=null) it[User_Apartment.apartmentId] = apartmentId
-                }
-            }
-    }
-
-    fun deleteApartmentToUser(id: Int) {
-        transaction {
-            User_Apartment.deleteWhere { User_Apartment.id eq id }
-        }
-    }
-
-    private fun deleteWhenDeletingUser(id:Int) {
-        transaction {
-            User_Apartment.deleteWhere { User_Apartment.userId eq id }
-        }
-    }
-
-    fun showUserApartment(id: Int?, userId: Int?, apartmentId: Int?): List<UserApartmentData> {
-        return when {
-            id != null -> {
-                User_Apartment.select { User_Apartment.id eq id }.map { User_Apartment.toMap(it) }
-            }
-            userId != null -> {
-                User_Apartment.select { User_Apartment.userId eq userId }.map { User_Apartment.toMap(it) }
-            }
-            apartmentId != null -> {
-                User_Apartment.select { User_Apartment.apartmentId eq apartmentId }.map { User_Apartment.toMap(it) }
-            }
-            else -> User_Apartment.selectAll().map { User_Apartment.toMap(it) }
         }
     }
 
     private fun validInput(data: UserDataInput) {
-        if(!checkEmail(data.email!!))
+        if (!checkEmail(data.email!!))
             throw Error("Email с неправильным форматом")
 
-        if(data.name?.length!! < 10)
+        if (data.name?.length!! < 10)
             throw Error("ФИО должно быть больше 10 символов")
 
-        if(data.password?.length!! < 8 )
+        if (data.password?.length!! < 8)
             throw Error("password should be minimum 8 characters")
 
-        if(data.address.isNullOrEmpty())
+        if (data.address.isNullOrEmpty())
             throw Error("Адрес - обязательное поле")
 
         if (data.orgId == null)
@@ -167,9 +127,8 @@ class UserMutation {
         if (data.phoneNumber == null)
             throw Error("Номер телефона - обязательное поле")
 
-        if (data.birthDate!= null) {
-            if (formatDate(data.birthDate) == null)
-            {
+        if (data.birthDate != null) {
+            if (formatDate(data.birthDate) == null) {
                 throw Error("Неправильный формат даты")
             }
         }
@@ -246,6 +205,51 @@ class UserMutation {
 //        return data
 //    }
 
+    }
+
+    fun addApartmentToUser(data: UserApartmentDataInput) {
+        transaction {
+            User_Apartment.insert {
+                it[userId] = data.userId!!
+                it[apartmentId] = data.apartmentId!!
+            }
+        }
+    }
+
+    fun updateApartmentToUser(id: Int, userId: Int?, apartmentId: Int?) {
+        transaction {
+            User_Apartment.update({ User_Apartment.id eq id }) {
+                if (userId != null) it[User_Apartment.userId] = userId
+                if (apartmentId != null) it[User_Apartment.apartmentId] = apartmentId
+            }
+        }
+    }
+
+    fun deleteApartmentToUser(id: Int) {
+        transaction {
+            User_Apartment.deleteWhere { User_Apartment.id eq id }
+        }
+    }
+
+    private fun deleteWhenDeletingUser(id: Int) {
+        transaction {
+            User_Apartment.deleteWhere { User_Apartment.userId eq id }
+        }
+    }
+
+    fun showUserApartment(id: Int?, userId: Int?, apartmentId: Int?): List<UserApartmentData> {
+        return when {
+            id != null -> {
+                User_Apartment.select { User_Apartment.id eq id }.map { User_Apartment.toMap(it) }
+            }
+            userId != null -> {
+                User_Apartment.select { User_Apartment.userId eq userId }.map { User_Apartment.toMap(it) }
+            }
+            apartmentId != null -> {
+                User_Apartment.select { User_Apartment.apartmentId eq apartmentId }.map { User_Apartment.toMap(it) }
+            }
+            else -> User_Apartment.selectAll().map { User_Apartment.toMap(it) }
+        }
     }
 }
 

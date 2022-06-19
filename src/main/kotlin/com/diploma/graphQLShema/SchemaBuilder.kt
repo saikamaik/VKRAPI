@@ -26,11 +26,11 @@ fun SchemaBuilder.schemaValue() {
     mutation("updateUser") {
         description = "Update user"
         resolver { id: Int, name: String?, birthDate: String?, email: String?, phoneNumber: String?, orgId: Int?, address: String? ->
-                try {
-            UserMutation().updateUser(id, name, birthDate, phoneNumber, email, orgId, address)
-            true
-        } catch (e: Exception) {
-        throw e
+            try {
+                UserMutation().updateUser(id, name, birthDate, phoneNumber, email, orgId, address)
+                true
+            } catch (e: Exception) {
+                throw e
             }
         }
     }
@@ -68,9 +68,9 @@ fun SchemaBuilder.schemaValue() {
         }
     }
 
-    mutation("updateUserApartment"){
+    mutation("updateUserApartment") {
         description = "Update a new user-apartment relationship"
-        resolver { id:Int, userId: Int?, apartmentId: Int? ->
+        resolver { id: Int, userId: Int?, apartmentId: Int? ->
             try {
                 UserMutation().updateApartmentToUser(id, userId, apartmentId)
                 true
@@ -116,7 +116,7 @@ fun SchemaBuilder.schemaValue() {
     mutation("updateOrg") {
         description = "Update org"
         resolver { id: Int, name: String? ->
-            try{
+            try {
                 OrganizationMutation().updateOrg(id, name)
                 true
             } catch (e: Exception) {
@@ -162,13 +162,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateType") {
         description = "Update Type"
-        resolver {id: Int, name: String? ->
-            try{
+        resolver { id: Int, name: String? ->
+            try {
                 TypeMutation().updateType(id, name)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deleteType") {
@@ -209,13 +210,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updatePosition") {
         description = "Update Position"
-        resolver {id: Int, name: String? ->
-            try{
+        resolver { id: Int, name: String? ->
+            try {
                 PositionMutation().updatePosition(id, name)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deletePosition") {
@@ -256,13 +258,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateMeasureReference") {
         description = "Update MeasureReference"
-        resolver {id: Int, fullName: String?, shortName: String? ->
-            try{
+        resolver { id: Int, fullName: String?, shortName: String? ->
+            try {
                 MeasureReferenceMutation().updateMeasureReference(id, fullName, shortName)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deleteMeasureReference") {
@@ -303,13 +306,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateApartment") {
         description = "Update Apartment"
-        resolver {id: Int, fullSize: Float?, liveSize: Float?, category: String?, branchId: Int?, personalAccount: Int? ->
-            try{
+        resolver { id: Int, fullSize: Float?, liveSize: Float?, category: String?, branchId: Int?, personalAccount: Int? ->
+            try {
                 ApartmentMutation().updateApartment(id, fullSize, liveSize, category, branchId, personalAccount)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deleteApartment") {
@@ -347,13 +351,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateBranch") {
         description = "Update Branch"
-        resolver {id: Int, name: String?, country: String?, city:String?, address: String?, phoneNumber: String?, orgId: Int? ->
-            try{
+        resolver { id: Int, name: String?, country: String?, city: String?, address: String?, phoneNumber: String?, orgId: Int? ->
+            try {
                 BranchMutation().updateBranch(id, name, country, city, address, phoneNumber, orgId)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deleteBranch") {
@@ -391,13 +396,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateCounterReference") {
         description = "Update CounterReference"
-        resolver {id: Int, number: String?, model: String?, label: String?, serviceDate: String?, typeId: Int? ->
-            try{
+        resolver { id: Int, number: String?, model: String?, label: String?, serviceDate: String?, typeId: Int? ->
+            try {
                 CounterReferenceMutation().updateCounterReference(id, number, model, label, serviceDate, typeId)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deleteCounterReference") {
@@ -435,13 +441,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateEmployee") {
         description = "Update Employee"
-        resolver {id: Int, name: String?, phoneNumber: String?, description: String?, branchId: Int?, positionId: Int? ->
-            try{
+        resolver { id: Int, name: String?, phoneNumber: String?, description: String?, branchId: Int?, positionId: Int? ->
+            try {
                 EmployeeMutation().updateEmployee(id, name, phoneNumber, description, branchId, positionId)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deleteEmployee") {
@@ -484,13 +491,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updatePaymentHistory") {
         description = "Update PaymentHistory"
-        resolver {id: Int, date: String?, cost:Float?, branchId: Int?, apartmentId: Int? ->
-            try{
+        resolver { id: Int, date: String?, cost: Float?, branchId: Int?, apartmentId: Int? ->
+            try {
                 PaymentHistoryMutation().updatePaymentHistory(id, date, cost, branchId, apartmentId)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deletePaymentHistory") {
@@ -509,7 +517,7 @@ fun SchemaBuilder.schemaValue() {
         description = "Показывает все элементы таблицы PaymentHistory"
         resolver { ->
             transaction {
-                PaymentHistory.selectAll().map{ PaymentHistory.toMap(it)}
+                PaymentHistory.selectAll().map { PaymentHistory.toMap(it) }
             }
         }
     }
@@ -528,13 +536,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateReadings") {
         description = "Update Readings"
-        resolver {id: Int, reading: Float?, date: String?, apartmentId: Int?, counterRefId: Int? ->
-            try{
+        resolver { id: Int, reading: Float?, date: String?, apartmentId: Int?, counterRefId: Int? ->
+            try {
                 ReadingsMutation().updateReadings(id, reading, date, apartmentId, counterRefId)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deleteReadings") {
@@ -576,13 +585,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateService") {
         description = "Update Service"
-        resolver {id: Int, name: String?, customWork: Boolean?, description: String?, positionId: Int?, measureRefId: Int?, categoryId: Int? ->
-            try{
+        resolver { id: Int, name: String?, customWork: Boolean?, description: String?, positionId: Int?, measureRefId: Int?, categoryId: Int? ->
+            try {
                 ServiceMutation().updateService(id, name, customWork, description, positionId, measureRefId, categoryId)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deleteService") {
@@ -604,7 +614,7 @@ fun SchemaBuilder.schemaValue() {
                 "3. Определенной должности по ID должности" +
                 "4. С определенным названием" +
                 "5. Все, если не вводить данные"
-        resolver {name: String?, serviceId: Int?, categoryId: Int?, positionId: Int? ->
+        resolver { name: String?, serviceId: Int?, categoryId: Int?, positionId: Int? ->
             transaction { ServiceMutation().showService(name, serviceId, categoryId, positionId) }
         }
     }
@@ -613,7 +623,8 @@ fun SchemaBuilder.schemaValue() {
         description = "Показывает цену услуги"
         resolver { branchId: Int, serviceId: Int ->
             transaction {
-                Service_Collection.select{(Service_Collection.serviceId eq serviceId) and (Service_Collection.branchId eq branchId)}.map { Service_Collection.toMap(it) }
+                Service_Collection.select { (Service_Collection.serviceId eq serviceId) and (Service_Collection.branchId eq branchId) }
+                    .map { Service_Collection.toMap(it) }
             }
         }
     }
@@ -632,13 +643,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateServiceCollection") {
         description = "Update ServiceCollection"
-        resolver {id: Int, branchId: Int?, serviceId: Int?, cost: Float? ->
-            try{
+        resolver { id: Int, branchId: Int?, serviceId: Int?, cost: Float? ->
+            try {
                 ServiceCollectionMutation().updateServiceCollection(id, branchId, serviceId, cost)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deleteServiceCollection") {
@@ -662,7 +674,7 @@ fun SchemaBuilder.schemaValue() {
                 "5. Коллекцию с ценой меньше cost2" +
                 "6. Если введены все данные то поиск идет по всем вышенаписанным фильтрам" +
                 "7. Все, если не вводить данные"
-        resolver {branchId: Int?, serviceId: Int?, cost1: Float?, cost2: Float?  ->
+        resolver { branchId: Int?, serviceId: Int?, cost1: Float?, cost2: Float? ->
             transaction { ServiceCollectionMutation().showServiceCollection(branchId, serviceId, cost1, cost2) }
         }
     }
@@ -681,13 +693,14 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateServiceRecord") {
         description = "Update ServiceRecord"
-        resolver {id: Int, registrationDate: String?, status: String?, userId: Int?, serviceId: Int?, employeeId: Int? ->
-            try{
+        resolver { id: Int, registrationDate: String?, status: String?, userId: Int?, serviceId: Int?, employeeId: Int? ->
+            try {
                 ServiceRecordMutation().updateServiceRecord(id, registrationDate, status, userId, serviceId, employeeId)
                 true
             } catch (e: Exception) {
                 throw e
-            } }
+            }
+        }
     }
 
     mutation("deleteServiceRecord") {
@@ -725,8 +738,8 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateCategory") {
         description = "Update Category"
-        resolver {id: Int, name: String? ->
-            try{
+        resolver { id: Int, name: String? ->
+            try {
                 CategoryMutation().updateCategory(id, name)
                 true
             } catch (e: Exception) {
@@ -791,115 +804,115 @@ fun SchemaBuilder.schemaValue() {
 //        }
 //    }
 
-    type<TypeData>{
+    type<TypeData> {
         description = "TypeData"
     }
 
-    inputType<TypeDataInput>{
+    inputType<TypeDataInput> {
         description = "The input of the Types without the identifier"
     }
 
-    type<ApartmentData>{
+    type<ApartmentData> {
         description = "ApartmentData"
     }
 
-    inputType<ApartmentDataInput>{
+    inputType<ApartmentDataInput> {
         description = "The input of the Apartments without the identifier"
     }
 
-    type<BranchData>{
+    type<BranchData> {
         description = "BranchData"
     }
 
-    inputType<BranchDataInput>{
+    inputType<BranchDataInput> {
         description = "The input of the Branches without the identifier"
     }
 
-    type<CounterReferenceData>{
+    type<CounterReferenceData> {
         description = "CounterReferenceData"
     }
 
-    inputType<CounterReferenceDataInput>{
+    inputType<CounterReferenceDataInput> {
         description = "The input of the CounterReferences without the identifier"
     }
 
-    type<EmployeeData>{
+    type<EmployeeData> {
         description = "EmployeeData"
     }
 
-    inputType<EmployeeDataInput>{
+    inputType<EmployeeDataInput> {
         description = "The input of the Employees without the identifier"
     }
 
-    type<MeasureReferenceData>{
+    type<MeasureReferenceData> {
         description = "MeasureReferenceData"
     }
 
-    inputType<MeasureReferenceDataInput>{
+    inputType<MeasureReferenceDataInput> {
         description = "The input of the MeasureReferences without the identifier"
     }
 
-    type<PaymentHistoryData>{
+    type<PaymentHistoryData> {
         description = "PaymentHistoryData"
     }
 
-    inputType<PaymentHistoryDataInput>{
+    inputType<PaymentHistoryDataInput> {
         description = "The input of the PaymentHistories without the identifier"
     }
 
-    type<PositionData>{
+    type<PositionData> {
         description = "PositionData"
     }
 
-    inputType<PositionDataInput>{
+    inputType<PositionDataInput> {
         description = "The input of the Positions without the identifier"
     }
 
-    type<ReadingsData>{
+    type<ReadingsData> {
         description = "ReadingsData"
     }
 
-    inputType<ReadingsDataInput>{
+    inputType<ReadingsDataInput> {
         description = "The input of the Readings without the identifier"
     }
 
-    type<ServiceData>{
+    type<ServiceData> {
         description = "ServiceData"
     }
 
-    inputType<ServiceDataInput>{
+    inputType<ServiceDataInput> {
         description = "The input of the Services without the identifier"
     }
 
-    type<ServiceRecordData>{
+    type<ServiceRecordData> {
         description = "ServiceRecordData"
     }
 
-    inputType<ServiceRecordDataInput>{
+    inputType<ServiceRecordDataInput> {
         description = "The input of the ServiceRecords without the identifier"
     }
 
-    type<OrganizationData>{
+    type<OrganizationData> {
         description = "OrgData"
     }
 
-    inputType<OrganizationDataInput>{
+    inputType<OrganizationDataInput> {
         description = "The input of the orgs without the identifier"
     }
 
-    type<UserData>{
+    type<UserData> {
         description = "UserData"
     }
 
-    inputType<UserDataInput>{
+    inputType<UserDataInput> {
         description = "The input of the users without the identifier"
     }
 
-    type<CategoryData>{
+    type<CategoryData> {
         description = "CategoryData"
     }
 
-    inputType<CategoryDataInput>{
+    inputType<CategoryDataInput> {
         description = "The input of the Categories without the identifier"
     }
 

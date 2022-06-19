@@ -12,8 +12,8 @@ class BranchMutation {
         transaction {
             Branch.insert {
                 it[name] = data.name!!
-                if (data.country!= null) it[country] = data.country
-                if (data.city!= null) it[city] = data.city
+                if (data.country != null) it[country] = data.country
+                if (data.city != null) it[city] = data.city
                 it[address] = data.address!!
                 it[phoneNumber] = data.phoneNumber!!
                 it[orgId] = data.orgId!!
@@ -21,15 +21,23 @@ class BranchMutation {
         }
     }
 
-    fun updateBranch(id: Int, name: String?, country: String?, city:String?, address: String?, phoneNumber: String?, orgId: Int?) {
+    fun updateBranch(
+        id: Int,
+        name: String?,
+        country: String?,
+        city: String?,
+        address: String?,
+        phoneNumber: String?,
+        orgId: Int?
+    ) {
         transaction {
-            Branch.update({Branch.id eq id}) {
-                if (name!= null) it[Branch.name] = name
-                if (country!= null) it[Branch.country] = country
-                if (city!= null) it[Branch.city] = city
-                if (address!= null) it[Branch.address] = address
-                if (phoneNumber!= null) it[Branch.phoneNumber] = phoneNumber
-                if (orgId!= null) it[Branch.orgId] = orgId
+            Branch.update({ Branch.id eq id }) {
+                if (name != null) it[Branch.name] = name
+                if (country != null) it[Branch.country] = country
+                if (city != null) it[Branch.city] = city
+                if (address != null) it[Branch.address] = address
+                if (phoneNumber != null) it[Branch.phoneNumber] = phoneNumber
+                if (orgId != null) it[Branch.orgId] = orgId
             }
         }
     }
@@ -42,7 +50,14 @@ class BranchMutation {
 
     //service collection inner key
 
-    fun showBranch(id: Int?, name: String?, country: String?, city: String?, address: String?, orgId: Int?): List<BranchData> {
+    fun showBranch(
+        id: Int?,
+        name: String?,
+        country: String?,
+        city: String?,
+        address: String?,
+        orgId: Int?
+    ): List<BranchData> {
         return when {
             id != null -> {
                 Branch.select { Branch.id eq id }.map { Branch.toMap(it) }

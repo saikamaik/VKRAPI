@@ -22,7 +22,7 @@ data class BranchDataInput(
     val orgId: Int?
 )
 
-object Branch: Table() {
+object Branch : Table() {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 255)
     val country = varchar("country", 255)

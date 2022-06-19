@@ -20,9 +20,16 @@ class EmployeeMutation {
         }
     }
 
-    fun updateEmployee(id: Int, name: String?, phoneNumber: String?, description: String?, branchId: Int?, positionId: Int?) {
+    fun updateEmployee(
+        id: Int,
+        name: String?,
+        phoneNumber: String?,
+        description: String?,
+        branchId: Int?,
+        positionId: Int?
+    ) {
         transaction {
-            Employee.update({Employee.id eq id}) {
+            Employee.update({ Employee.id eq id }) {
                 if (name != null) it[Employee.name] = name
                 if (phoneNumber != null) it[Employee.phoneNumber] = phoneNumber
                 if (description != null) it[Employee.description] = description
@@ -49,7 +56,7 @@ class EmployeeMutation {
             branchId != null -> {
                 Employee.select { Employee.branchId eq branchId }.map { Employee.toMap(it) }
             }
-            positionId != null ->{
+            positionId != null -> {
                 Employee.select { Employee.positionId eq positionId }.map { Employee.toMap(it) }
             }
             else -> Employee.selectAll().map { Employee.toMap(it) }

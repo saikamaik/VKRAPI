@@ -21,14 +21,21 @@ class CounterReferenceMutation {
         }
     }
 
-    fun updateCounterReference(id: Int, number: String?, model: String?, label: String?, serviceDate: String?, typeId: Int?) {
+    fun updateCounterReference(
+        id: Int,
+        number: String?,
+        model: String?,
+        label: String?,
+        serviceDate: String?,
+        typeId: Int?
+    ) {
         transaction {
-            Counter_Reference.update ({Counter_Reference.id eq id}) {
-                if(number != null) it[Counter_Reference.number] = number
-                if(model != null) it[Counter_Reference.model] = model
-                if(label != null) it[Counter_Reference.label] = label
-                if(serviceDate != null) it[Counter_Reference.serviceDate] = DateTime(serviceDate)
-                if(typeId != null) it[Counter_Reference.typeId] = typeId
+            Counter_Reference.update({ Counter_Reference.id eq id }) {
+                if (number != null) it[Counter_Reference.number] = number
+                if (model != null) it[Counter_Reference.model] = model
+                if (label != null) it[Counter_Reference.label] = label
+                if (serviceDate != null) it[Counter_Reference.serviceDate] = DateTime(serviceDate)
+                if (typeId != null) it[Counter_Reference.typeId] = typeId
             }
         }
     }
@@ -39,7 +46,14 @@ class CounterReferenceMutation {
         }
     }
 
-    fun showCounterReference(id: Int?, number: String?, model: String?, label: String?, serviceDate: String?, typeId: Int?):List<CounterReferenceData> {
+    fun showCounterReference(
+        id: Int?,
+        number: String?,
+        model: String?,
+        label: String?,
+        serviceDate: String?,
+        typeId: Int?
+    ): List<CounterReferenceData> {
         return when {
             id != null -> {
                 Counter_Reference.select { Counter_Reference.id eq id }.map { Counter_Reference.toMap(it) }
@@ -54,7 +68,8 @@ class CounterReferenceMutation {
                 Counter_Reference.select { Counter_Reference.label eq label }.map { Counter_Reference.toMap(it) }
             }
             serviceDate != null -> {
-                Counter_Reference.select { Counter_Reference.serviceDate eq DateTime(serviceDate) }.map { Counter_Reference.toMap(it) }
+                Counter_Reference.select { Counter_Reference.serviceDate eq DateTime(serviceDate) }
+                    .map { Counter_Reference.toMap(it) }
             }
             typeId != null -> {
                 Counter_Reference.select { Counter_Reference.typeId eq typeId }.map { Counter_Reference.toMap(it) }

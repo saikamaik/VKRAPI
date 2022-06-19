@@ -17,7 +17,7 @@ class OrganizationMutation {
     fun updateOrg(id: Int, name: String?) {
         transaction {
             Organization.update({ Organization.id eq id }) {
-                if (name!=null) it[Organization.name] = name
+                if (name != null) it[Organization.name] = name
             }
         }
     }
@@ -42,12 +42,12 @@ class OrganizationMutation {
         return when {
             (id != null && name != null) ->
                 Organization
-                    .select {(Organization.id eq id) and (Organization.name eq name)}
+                    .select { (Organization.id eq id) and (Organization.name eq name) }
                     .map { Organization.toMap(it) }
             id != null ->
-                Organization.select {Organization.id eq id}.map { Organization.toMap(it) }
+                Organization.select { Organization.id eq id }.map { Organization.toMap(it) }
             name != null ->
-                Organization.select {Organization.name eq name}.map { Organization.toMap(it) }
+                Organization.select { Organization.name eq name }.map { Organization.toMap(it) }
             else -> Organization.selectAll().map { Organization.toMap(it) }
         }
 

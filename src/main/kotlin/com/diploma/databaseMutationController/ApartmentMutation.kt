@@ -20,16 +20,23 @@ class ApartmentMutation {
         }
     }
 
-    fun updateApartment(id: Int, fullSize: Float?, liveSize: Float?, category: String?, branchId: Int?, personalAccount: Int? ) {
+    fun updateApartment(
+        id: Int,
+        fullSize: Float?,
+        liveSize: Float?,
+        category: String?,
+        branchId: Int?,
+        personalAccount: Int?
+    ) {
         transaction {
             Apartment.update({
                 Apartment.id eq id
             }) {
-                if (fullSize != null ) it[Apartment.fullSize] = fullSize
-                if (liveSize != null ) it[Apartment.liveSize] = liveSize
-                if (category != null ) it[Apartment.category] = category
-                if (branchId != null ) it[Apartment.branchId] = branchId
-                if (personalAccount != null ) it[Apartment.personalAccount] = personalAccount
+                if (fullSize != null) it[Apartment.fullSize] = fullSize
+                if (liveSize != null) it[Apartment.liveSize] = liveSize
+                if (category != null) it[Apartment.category] = category
+                if (branchId != null) it[Apartment.branchId] = branchId
+                if (personalAccount != null) it[Apartment.personalAccount] = personalAccount
             }
         }
     }
@@ -40,7 +47,14 @@ class ApartmentMutation {
         }
     }
 
-    fun showApartment(id: Int?, fullSize: Float?, liveSize: Float?, category: String?, branchId: Int?, personalAccount: Int?): List<ApartmentData> {
+    fun showApartment(
+        id: Int?,
+        fullSize: Float?,
+        liveSize: Float?,
+        category: String?,
+        branchId: Int?,
+        personalAccount: Int?
+    ): List<ApartmentData> {
         return when {
             id != null -> {
                 Apartment.select { Apartment.id eq id }.map { Apartment.toMap(it) }

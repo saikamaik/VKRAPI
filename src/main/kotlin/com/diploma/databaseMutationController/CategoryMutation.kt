@@ -42,7 +42,7 @@ class CategoryMutation {
                 Category.select { Category.id eq id }.map { Category.toMap(it) }
             }
             name != null -> {
-                Category.select { Category.name eq name }.map { Category.toMap(it)}
+                Category.select { Category.name eq name }.map { Category.toMap(it) }
             }
             else -> Category.selectAll().map { Category.toMap(it) }
         }

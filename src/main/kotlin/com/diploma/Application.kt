@@ -5,10 +5,7 @@ import com.apurebase.kgraphql.KGraphQL
 import com.diploma.dataBase.DatabaseFactory
 import com.diploma.graphQLShema.schemaValue
 import com.diploma.model.GraphQLRequest
-import com.diploma.model.User
 import com.diploma.utils.JwtConfig
-import com.diploma.utils.TokenKey
-import graphql.VisibleForTesting
 import io.ktor.server.netty.*
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -17,10 +14,7 @@ import io.ktor.features.*
 import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.request.*
-import io.ktor.response.*
 import io.ktor.routing.*
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
@@ -72,12 +66,12 @@ fun Application.module() {
 //            }
 //        }
 //        authenticate("auth-jwt") {
-            route("/graphql") {
-                post() {
-                    val graphqlRequest = call.receive<GraphQLRequest>()
-                    KGraphQL.schema { schemaValue() }.execute(graphqlRequest.query)
-                }
+        route("/graphql") {
+            post() {
+                val graphqlRequest = call.receive<GraphQLRequest>()
+                KGraphQL.schema { schemaValue() }.execute(graphqlRequest.query)
             }
+        }
 //        }
     }
 }

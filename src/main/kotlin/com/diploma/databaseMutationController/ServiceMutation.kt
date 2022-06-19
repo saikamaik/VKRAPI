@@ -21,15 +21,23 @@ class ServiceMutation {
         }
     }
 
-    fun updateService(id: Int, name: String?, customWork: Boolean?, description: String?, positionId: Int?, measureRefId: Int?, categoryId: Int?) {
+    fun updateService(
+        id: Int,
+        name: String?,
+        customWork: Boolean?,
+        description: String?,
+        positionId: Int?,
+        measureRefId: Int?,
+        categoryId: Int?
+    ) {
         transaction {
-            Service.update ({Service.id eq id}) {
-                if(name != null) it[Service.name] = name
-                if(customWork != null) it[Service.customWork] = customWork
-                if(description != null) it[Service.description] = description
-                if(positionId != null) it[Service.positionId] = positionId
-                if(measureRefId != null) it[Service.measureRefId] = measureRefId
-                if(categoryId != null) it[Service.categoryId] = categoryId
+            Service.update({ Service.id eq id }) {
+                if (name != null) it[Service.name] = name
+                if (customWork != null) it[Service.customWork] = customWork
+                if (description != null) it[Service.description] = description
+                if (positionId != null) it[Service.positionId] = positionId
+                if (measureRefId != null) it[Service.measureRefId] = measureRefId
+                if (categoryId != null) it[Service.categoryId] = categoryId
             }
         }
     }
@@ -40,18 +48,20 @@ class ServiceMutation {
         }
     }
 
-    fun showService(name: String?, serviceId: Int?, categoryId: Int?, positionId: Int? ): List<ServiceData> {
+    fun showService(name: String?, serviceId: Int?, categoryId: Int?, positionId: Int?): List<ServiceData> {
         return when {
             (name != null && serviceId != null && categoryId != null && positionId != null) -> {
                 Service
-                    .select { (Service.name eq name) and
-                            (Service.id eq serviceId) and
-                            (Service.categoryId eq categoryId) and
-                            (Service.positionId eq positionId) }
-                    .map {Service.toMap(it)}
+                    .select {
+                        (Service.name eq name) and
+                                (Service.id eq serviceId) and
+                                (Service.categoryId eq categoryId) and
+                                (Service.positionId eq positionId)
+                    }
+                    .map { Service.toMap(it) }
             }
             (name != null) -> {
-                Service.select { Service.name eq name }.map {Service.toMap(it)}
+                Service.select { Service.name eq name }.map { Service.toMap(it) }
             }
             (serviceId != null) -> {
                 Service.select { Service.id eq serviceId }.map { Service.toMap(it) }
@@ -60,7 +70,7 @@ class ServiceMutation {
                 Service.select { Service.categoryId eq categoryId }.map { Service.toMap(it) }
             }
             (positionId != null) -> {
-                Service.select {Service.positionId eq positionId}.map { Service.toMap(it) }
+                Service.select { Service.positionId eq positionId }.map { Service.toMap(it) }
             }
             else -> Service.selectAll().map { Service.toMap(it) }
         }

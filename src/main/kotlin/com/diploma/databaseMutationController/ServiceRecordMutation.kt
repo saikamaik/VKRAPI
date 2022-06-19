@@ -22,9 +22,16 @@ class ServiceRecordMutation {
         }
     }
 
-    fun updateServiceRecord(id: Int, registrationDate: String?, status: String?, userId: Int?, serviceId: Int?, employeeId: Int?) {
+    fun updateServiceRecord(
+        id: Int,
+        registrationDate: String?,
+        status: String?,
+        userId: Int?,
+        serviceId: Int?,
+        employeeId: Int?
+    ) {
         transaction {
-            Service_Record.update ({ Service_Record.id eq id}) {
+            Service_Record.update({ Service_Record.id eq id }) {
                 if (registrationDate != null) it[Service_Record.registrationDate] = DateTime(registrationDate)
                 if (status != null) it[Service_Record.status] = status
                 if (userId != null) it[Service_Record.userId] = userId
@@ -40,26 +47,33 @@ class ServiceRecordMutation {
         }
     }
 
-    fun showServiceRecord(id: Int?, registrationDate: String?, status: String?, userId: Int?, serviceId: Int?, employeeId: Int?): List<ServiceRecordData> {
+    fun showServiceRecord(
+        id: Int?,
+        registrationDate: String?,
+        status: String?,
+        userId: Int?,
+        serviceId: Int?,
+        employeeId: Int?
+    ): List<ServiceRecordData> {
         val date = DateTime(registrationDate)
         return when {
             id != null -> {
-                Service_Record.select { Service_Record.id eq id }. map { Service_Record.toMap(it) }
+                Service_Record.select { Service_Record.id eq id }.map { Service_Record.toMap(it) }
             }
             registrationDate != null -> {
-                Service_Record.select { Service_Record.registrationDate eq date }. map { Service_Record.toMap(it) }
+                Service_Record.select { Service_Record.registrationDate eq date }.map { Service_Record.toMap(it) }
             }
             status != null -> {
-                Service_Record.select { Service_Record.status eq status }. map { Service_Record.toMap(it) }
+                Service_Record.select { Service_Record.status eq status }.map { Service_Record.toMap(it) }
             }
             userId != null -> {
-                Service_Record.select { Service_Record.userId eq userId }. map { Service_Record.toMap(it) }
+                Service_Record.select { Service_Record.userId eq userId }.map { Service_Record.toMap(it) }
             }
             serviceId != null -> {
-                Service_Record.select { Service_Record.serviceId eq serviceId }. map { Service_Record.toMap(it) }
+                Service_Record.select { Service_Record.serviceId eq serviceId }.map { Service_Record.toMap(it) }
             }
             employeeId != null -> {
-                Service_Record.select { Service_Record.employeeId eq employeeId }. map { Service_Record.toMap(it) }
+                Service_Record.select { Service_Record.employeeId eq employeeId }.map { Service_Record.toMap(it) }
             }
             else -> Service_Record.selectAll().map { Service_Record.toMap(it) }
         }

@@ -18,12 +18,12 @@ class MeasureReferenceMutation {
 
     fun updateMeasureReference(id: Int, fullName: String?, shortName: String?) {
         transaction {
-                Measure_Reference.update({ Measure_Reference.id eq id}) {
-                    if (fullName!=null) it[Measure_Reference.fullName] = fullName
-                    if (shortName!=null) it[Measure_Reference.shortName] = shortName
-                }
+            Measure_Reference.update({ Measure_Reference.id eq id }) {
+                if (fullName != null) it[Measure_Reference.fullName] = fullName
+                if (shortName != null) it[Measure_Reference.shortName] = shortName
             }
         }
+    }
 
     fun deleteMeasureReference(id: Int) {
         transaction {
@@ -47,9 +47,11 @@ class MeasureReferenceMutation {
         return when {
             (id != null && fullName != null && shortName != null) ->
                 Measure_Reference
-                    .select { (Measure_Reference.id eq id) and
-                            (Measure_Reference.fullName eq fullName) and
-                            (Measure_Reference.shortName eq shortName) }.map { Measure_Reference.toMap(it) }
+                    .select {
+                        (Measure_Reference.id eq id) and
+                                (Measure_Reference.fullName eq fullName) and
+                                (Measure_Reference.shortName eq shortName)
+                    }.map { Measure_Reference.toMap(it) }
             id != null -> {
                 Measure_Reference.select { Measure_Reference.id eq id }.map { Measure_Reference.toMap(it) }
             }
@@ -57,7 +59,8 @@ class MeasureReferenceMutation {
                 Measure_Reference.select { Measure_Reference.fullName eq fullName }.map { Measure_Reference.toMap(it) }
             }
             shortName != null -> {
-                Measure_Reference.select { Measure_Reference.shortName eq shortName }.map { Measure_Reference.toMap(it) }
+                Measure_Reference.select { Measure_Reference.shortName eq shortName }
+                    .map { Measure_Reference.toMap(it) }
             }
             else -> Measure_Reference.selectAll().map { Measure_Reference.toMap(it) }
         }

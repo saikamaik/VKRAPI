@@ -16,8 +16,8 @@ class PositionMutation {
 
     fun updatePosition(id: Int, name: String?) {
         transaction {
-            Position.update({Position.id eq id}) {
-                if (name!=null) it[Position.name] = name
+            Position.update({ Position.id eq id }) {
+                if (name != null) it[Position.name] = name
             }
         }
     }
@@ -36,7 +36,7 @@ class PositionMutation {
         Employee.selectAll().forEach() { _ ->
             eq1 = Employee.positionId.equals(id)
         }
-        Service.selectAll().forEach() {_ ->
+        Service.selectAll().forEach() { _ ->
             eq2 = Service.positionId.equals(id)
         }
         return (eq1) or (eq2)
@@ -46,12 +46,12 @@ class PositionMutation {
         return when {
             (id != null && name != null) ->
                 Position
-                    .select {(Position.id eq id) and (Position.name eq name)}
+                    .select { (Position.id eq id) and (Position.name eq name) }
                     .map { Position.toMap(it) }
             id != null ->
-                Position.select {Position.id eq id}.map { Position.toMap(it) }
+                Position.select { Position.id eq id }.map { Position.toMap(it) }
             name != null ->
-                Position.select {Position.name eq name}.map { Position.toMap(it) }
+                Position.select { Position.name eq name }.map { Position.toMap(it) }
             else -> Position.selectAll().map { Position.toMap(it) }
         }
     }

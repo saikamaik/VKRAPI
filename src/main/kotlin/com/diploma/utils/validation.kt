@@ -2,6 +2,8 @@ package com.diploma.utils
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.regex.Pattern
 
@@ -19,9 +21,12 @@ fun checkEmail(email: String): Boolean {
     return EMAIL_ADDRESS_PATTERN.matcher(email).matches()
 }
 
-val BIRTH_DATE_PATTERN: Pattern = Pattern.compile(
-    ""
-)
+fun getLocalDate(): String {
+    val current = LocalDateTime.now()
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return current.format(formatter)
+}
 
 fun formatDate(dateStr: String): Date? {
     val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
