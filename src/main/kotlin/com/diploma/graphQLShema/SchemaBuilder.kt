@@ -25,9 +25,9 @@ fun SchemaBuilder.schemaValue() {
 
     mutation("updateUser") {
         description = "Update user"
-        resolver { id: Int, name: String?, birthDate: String?, email: String?, phoneNumber: String?, orgId: Int?, address: String? ->
+        resolver { id: Int, name: String?, birthDate: String?, email: String?, phoneNumber: String?, orgId: Int?, address: String?, password: String? ->
             try {
-                UserMutation().updateUser(id, name, birthDate, phoneNumber, email, orgId, address)
+                UserMutation().updateUser(id, name, birthDate, phoneNumber, email, orgId, address, password)
                 true
             } catch (e: Exception) {
                 throw e

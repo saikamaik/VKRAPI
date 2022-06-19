@@ -79,7 +79,8 @@ class UserMutation {
         phoneNumber: String?,
         email: String?,
         orgId: Int?,
-        address: String?
+        address: String?,
+        password: String?
     ) {
         if (email != null) {
             if (!checkEmail(email))
@@ -104,6 +105,7 @@ class UserMutation {
                 if (email != null) it[User.email] = email
                 if (orgId != null) it[User.orgId] = orgId
                 if (address != null) it[User.address] = address
+                if (password != null) it[User.password] = password
             }
         }
     }
